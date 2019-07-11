@@ -1,5 +1,9 @@
 export default {
-  setReceiptPreviewDimensions: (state, dimensions) => {
-    state.receiptPreviewDimensions = dimensions
+  setChosenDirectory: (state, directory) => {
+    state.chosenDirectory = directory
+  },
+
+  setDirectoryImages: (state, directory) => {
+    state.directoryImages = directory
   }
 }

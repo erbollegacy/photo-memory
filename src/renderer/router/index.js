@@ -11,6 +11,11 @@ export default new Router({
       component: require('@/views/ChooseFolder').default
     },
     {
+      path: '/select-photos',
+      name: 'selectPhotos',
+      component: require('@/views/SelectPhotos').default
+    },
+    {
       path: '*',
       redirect: '/'
     }

@@ -1,3 +1,4 @@
 export default {
-  showUploadingAnimation: false
+  chosenDirectory: '/Users/erick/Desktop/photos',
+  directoryImages: null
 }

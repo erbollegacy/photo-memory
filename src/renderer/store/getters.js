@@ -1,3 +1,4 @@
 export default {
-  showUploadingAnimation: state => state.showUploadingAnimation
+  chosenDirectory: state => state.chosenDirectory,
+  directoryImages: state => state.directoryImages
 }

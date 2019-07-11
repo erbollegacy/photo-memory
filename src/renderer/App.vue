@@ -122,7 +122,7 @@
       <div id="content-wrapper" class="d-flex flex-column">
 
         <!-- Main Content -->
-        <div id="content" style="position: relative">
+        <div id="content" class="mt-4" style="position: relative">
 
           <router-view></router-view>
 

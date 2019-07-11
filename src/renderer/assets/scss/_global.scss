@@ -24,6 +24,8 @@ a {
     overflow-x: hidden;
     #content {
       flex: 1 0 auto;
+      max-height: calc(100vh - 88px);
+      overflow: auto;
     }
   }
 }

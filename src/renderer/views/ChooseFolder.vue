@@ -28,9 +28,8 @@
         'scanDirectory'
       ]),
       async onClicked () {
-        let directory = await this.chooseDirectory()
-        let photos = await this.scanDirectory(directory)
-        console.log(photos)
+        await this.chooseDirectory()
+        this.$router.push('select-photos')
       }
     }
   }

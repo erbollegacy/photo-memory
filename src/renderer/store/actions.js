@@ -2,17 +2,11 @@ import { remote } from 'electron'
 import fs from 'fs'
 
 export default {
-  setReceiptPreviewDimensions ({commit}, dimensions) {
-    commit('setReceiptPreviewDimensions', {
-      width: dimensions.width,
-      height: dimensions.height
-    })
-  },
-
-  chooseDirectory () {
+  chooseDirectory ({commit}) {
     return new Promise((resolve) => {
       remote.dialog.showOpenDialog({ properties: ['openDirectory'] }, (filePaths) => {
-        return resolve(filePaths[0])
+        commit('setChosenDirectory', filePaths[0])
+        resolve(filePaths[0])
       })
     })
   },
@@ -24,6 +18,7 @@ export default {
           return reject(err)
         }
         const withExtension = files.filter(file => !file.startsWith('.') && file.split('.').length > 1)
+        commit('setDirectoryImages', withExtension)
         resolve(withExtension)
       })
     })
