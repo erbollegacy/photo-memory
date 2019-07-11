@@ -22,7 +22,10 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     height: 563,
     useContentSize: true,
-    width: 1000
+    width: 1000,
+    webPreferences: {
+      nodeIntegration: true
+    }
   })
 
   mainWindow.loadURL(winURL)
@@ -44,6 +47,19 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
+})
+
+app.on('ready', () => {
+  const { protocol } = require('electron')
+  const path = require('path')
+  console.log('atom registering')
+  protocol.registerFileProtocol('atom', (request, callbacks) => {
+    const url = request.url.substr(7)
+    console.log(path.normalize(`${url}`))
+    callbacks({ path: path.normalize(`${url}`) })
+  }, (error) => {
+    if (error) console.error('Failed to register protocol')
+  })
 })
 
 /**
