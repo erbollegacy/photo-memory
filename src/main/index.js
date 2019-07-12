@@ -1,6 +1,7 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, protocol } from 'electron'
+import sharp from 'sharp'
 
 /**
  * Set `__static` path to static files in production
@@ -50,9 +51,6 @@ app.on('activate', () => {
 })
 
 app.on('ready', () => {
-  const { protocol } = require('electron')
-  const sharp = require('sharp')
-
   console.log('registering thumb protocol')
   protocol.registerBufferProtocol('thumb', (request, callbacks) => {
     const url = request.url.substr(6)
