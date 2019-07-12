@@ -51,14 +51,17 @@ app.on('activate', () => {
 
 app.on('ready', () => {
   const { protocol } = require('electron')
-  const path = require('path')
-  console.log('atom registering')
-  protocol.registerFileProtocol('atom', (request, callbacks) => {
-    const url = request.url.substr(7)
-    console.log(path.normalize(`${url}`))
-    callbacks({ path: path.normalize(`${url}`) })
-  }, (error) => {
-    if (error) console.error('Failed to register protocol')
+  const sharp = require('sharp')
+
+  console.log('registering thumb protocol')
+  protocol.registerBufferProtocol('thumb', (request, callbacks) => {
+    const url = request.url.substr(6)
+    sharp(url)
+      .resize(260)
+      .toBuffer()
+      .then(data => {
+        callbacks({ mimeType: 'image/jpeg', data })
+      })
   })
 })
 

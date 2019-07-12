@@ -9,7 +9,7 @@
 
     <div class="gallery">
       <figure v-for="image in directoryImages">
-        <img :src="`atom://${chosenDirectory}/${image}`" alt="" />
+        <img :src="`thumb://${chosenDirectory}/${image}`" alt="" />
       </figure>
     </div>
 
