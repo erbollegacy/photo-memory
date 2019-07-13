@@ -2,7 +2,7 @@
 
 import { app, BrowserWindow, protocol } from 'electron'
 import sharp from 'sharp'
-
+import queryString from 'query-string'
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -53,9 +53,12 @@ app.on('activate', () => {
 app.on('ready', () => {
   console.log('registering thumb protocol')
   protocol.registerBufferProtocol('thumb', (request, callbacks) => {
-    const url = request.url.substr(6)
+    const [ url, query ] = request.url.substr(6).split('?')
+    const { w } = queryString.parse(query)
+    const width = parseInt(w || 260)
+
     sharp(url)
-      .resize(260)
+      .resize(width)
       .toBuffer()
       .then(data => {
         callbacks({ mimeType: 'image/jpeg', data })

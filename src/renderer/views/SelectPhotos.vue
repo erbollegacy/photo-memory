@@ -34,43 +34,61 @@
     },
     data () {
       return {
-        images: []
+        images: [],
+        resizeTimeout: null,
+        resizeDelay: 200
       }
     },
     methods: {
       ...mapActions([
         'scanDirectory'
-      ])
+      ]),
+
+      onResize () {
+        clearTimeout(this.resizeTimeout)
+        this.resizeTimeout = setTimeout(() => {
+          this.updateImages()
+        }, this.resizeDelay)
+      },
+
+      updateImages () {
+        const sizesPromises = []
+        const containerWidth = this.$refs.container.offsetWidth
+
+        this.directoryImages.forEach(image => {
+          let size = sharp(`${this.chosenDirectory}/${image}`)
+            .metadata()
+            .then(({ width, height }) => {
+              let columnWidth = (containerWidth / 3) - 7
+              let ratio = width / columnWidth
+              height = height / ratio
+              width = columnWidth
+
+              return { width, height, path: `thumb://${this.chosenDirectory}/${image}?w=${parseInt(width)}` }
+            })
+          sizesPromises.push(size)
+        })
+
+        Promise.all(sizesPromises)
+          .then(sizes => {
+            this.images = sizes
+          })
+      }
     },
+
     mounted () {
       if (this.chosenDirectory) {
         this.scanDirectory(this.chosenDirectory)
-          .then(images => {
-            const sizesPromises = []
-            const containerWidth = this.$refs.container.offsetWidth
+          .then(() => this.updateImages())
 
-            images.forEach(image => {
-              let size = sharp(`${this.chosenDirectory}/${image}`)
-                .metadata()
-                .then(({ width, height }) => {
-                  let columnWidth = (containerWidth / 3) - 7
-                  let ratio = width / columnWidth
-                  height = height / ratio
-                  width = columnWidth
-
-                  return { width, height, path: `thumb://${this.chosenDirectory}/${image}` }
-                })
-              sizesPromises.push(size)
-            })
-
-            Promise.all(sizesPromises)
-              .then(sizes => {
-                this.images = sizes
-              })
-          })
+        window.addEventListener('resize', this.onResize)
       } else {
         this.$router.push('/')
       }
+    },
+
+    destroyed () {
+      window.removeEventListener('resize', this.onResize)
     }
   }
 </script>
@@ -86,12 +104,6 @@
     width: 100%;
     margin: 7px 0;
     background: #ccc;
-  }
-
-  @media (max-width: 500px) {
-    .gallery {
-      column-count: 1;
-    }
   }
 
 </style>
