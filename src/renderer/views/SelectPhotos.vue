@@ -7,10 +7,13 @@
       <h1 class="h3 mb-0 text-gray-800">Select Photos</h1>
     </div>
 
-    <div class="gallery">
-      <figure v-for="image in directoryImages">
-        <img :src="`thumb://${chosenDirectory}/${image}`" alt="" />
-      </figure>
+    <div class="col-md-12" ref="container">
+      <div class="row">
+        <div class="gallery">
+          <img v-for="image in images" v-lazy="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"
+               :key="image.path" alt=""/>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -19,6 +22,7 @@
 
 <script>
   import { mapActions, mapGetters } from 'vuex'
+  import sharp from 'sharp'
 
   export default {
     name: 'choose-folder',
@@ -28,6 +32,11 @@
         'directoryImages'
       ])
     },
+    data () {
+      return {
+        images: []
+      }
+    },
     methods: {
       ...mapActions([
         'scanDirectory'
@@ -36,6 +45,29 @@
     mounted () {
       if (this.chosenDirectory) {
         this.scanDirectory(this.chosenDirectory)
+          .then(images => {
+            const sizesPromises = []
+            const containerWidth = this.$refs.container.offsetWidth
+
+            images.forEach(image => {
+              let size = sharp(`${this.chosenDirectory}/${image}`)
+                .metadata()
+                .then(({ width, height }) => {
+                  let columnWidth = (containerWidth / 3) - 7
+                  let ratio = width / columnWidth
+                  height = height / ratio
+                  width = columnWidth
+
+                  return { width, height, path: `thumb://${this.chosenDirectory}/${image}` }
+                })
+              sizesPromises.push(size)
+            })
+
+            Promise.all(sizesPromises)
+              .then(sizes => {
+                this.images = sizes
+              })
+          })
       } else {
         this.$router.push('/')
       }
@@ -45,40 +77,21 @@
 
 <style scoped lang="scss">
   .gallery {
-    position: relative;
-    z-index: 2;
-    padding: 10px;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-flow: row wrap;
-    flex-flow: row wrap;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
-    justify-content: space-between;
-    -webkit-transition: all .5s ease-in-out;
-    transition: all .5s ease-in-out;
+    column-count: 3;
+    column-fill: auto;
+    column-gap: 14px;
   }
-  .gallery.pop {
-    -webkit-filter: blur(10px);
-    filter: blur(10px);
-  }
-  .gallery figure {
-    -ms-flex-preferred-size: 33.333%;
-    flex-basis: 33.333%;
-    padding: 10px;
-    overflow: hidden;
-    border-radius: 10px;
-    cursor: pointer;
-  }
-  .gallery figure img {
+
+  .gallery img {
     width: 100%;
-    border-radius: 10px;
-    -webkit-transition: all .3s ease-in-out;
-    transition: all .3s ease-in-out;
+    margin: 7px 0;
+    background: #ccc;
   }
-  .gallery figure figcaption {
-    display: none;
+
+  @media (max-width: 500px) {
+    .gallery {
+      column-count: 1;
+    }
   }
 
 </style>
