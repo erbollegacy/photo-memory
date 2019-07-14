@@ -37,6 +37,8 @@
             </div>
           </div>
         </div>
+
+        <b-spinner v-if="showLoading" class="loading-spinner" type="grow" variant="primary" label="Loading..."></b-spinner>
       </div>
       <!-- /.container-fluid -->
     </div>
@@ -78,8 +80,6 @@
         </b-button>
       </template>
     </b-modal>
-
-    <b-spinner v-if="showLoading" class="loading-spinner" type="grow" variant="primary" label="Loading..."></b-spinner>
 
   </div>
 </template>
@@ -299,5 +299,8 @@
     bottom: 50%;
     width: 5rem;
     height: 5rem;
+  }
+  .page {
+    position: relative;
   }
 </style>
