@@ -12,6 +12,9 @@
         <div class="gallery">
           <div class="image-container" v-for="image in images" :key="image.path">
             <img v-lazy="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"/>
+            <span class="icon-selected" v-if="selectedImages[image.name]">
+              <i class="fas fa-check-circle"></i>
+            </span>
             <div class="cover">
               <div class="actions">
 
@@ -19,8 +22,11 @@
                   <!--<i class="fas fa-edit"></i>-->
                 <!--</a>-->
 
-                <a href="#" title="Select Photo" @click="select(image.path)" class="btn btn-light btn-circle" style="margin-left: 9px;">
+                <a v-if="!selectedImages[image.name]" href="#" title="Select Photo" @click.prevent="select(image.name)" class="btn btn-light btn-circle btn-select">
                   <i class="fas fa-plus"></i>
+                </a>
+                <a v-else href="#" title="Unselect Photo" @click.prevent="unselect(image.name)" class="btn btn-light btn-circle btn-select">
+                  <i class="fas fa-minus"></i>
                 </a>
               </div>
             </div>
@@ -78,7 +84,12 @@
               height = height / ratio
               width = columnWidth
 
-              return { width, height, path: `thumb://${this.chosenDirectory}/${image}?w=${parseInt(width)}` }
+              return {
+                width,
+                height,
+                path: `thumb://${this.chosenDirectory}/${image}?w=${parseInt(width)}`,
+                name: image
+              }
             })
           sizesPromises.push(size)
         })
@@ -90,11 +101,11 @@
       },
 
       select (url) {
-        this.selectedImages[url] = true
+        this.$set(this.selectedImages, url, true)
       },
 
       unselect (url) {
-        delete this.selectedImages[url]
+        this.$delete(this.selectedImages, url)
       }
     },
 
@@ -128,6 +139,14 @@
       img {
         width: 100%;
         background: #ccc;
+      }
+
+      .icon-selected {
+        position: absolute;
+        left: 24px;
+        top: 26px;
+        color: #fff;
+        z-index: 2;
       }
 
       .cover {
