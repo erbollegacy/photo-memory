@@ -1,6 +1,7 @@
 import { remote } from 'electron'
 import fs from 'fs'
 import Swal from 'sweetalert2'
+import sharp from 'sharp'
 
 export default {
   chooseDirectory ({commit}) {
@@ -31,47 +32,69 @@ export default {
     const path = require('path')
     const ops = []
     const imagesFolder = 'images'
+    const imagesThumbFolder = 'thumb'
     const { chosenDirectory } = getters
 
     fs.mkdir(path.join(saveTo, imagesFolder))
-      .catch(() => console.log('folder already exists'))
+      .catch(() => console.log('images folder already exists'))
 
     for (let image in selectedImages) {
       const imagePath = path.join(chosenDirectory, image)
       const destinationPath = path.join(saveTo, imagesFolder, image)
-      const promise = fs.copyFile(imagePath, destinationPath)
-      ops.push(promise)
+      const imagePromise = fs.copyFile(imagePath, destinationPath)
+      ops.push(imagePromise)
     }
-    Promise.all(ops)
-      .then(() => {
-        console.log('image copied')
-      })
+
+    fs.mkdir(path.join(saveTo, imagesThumbFolder))
+      .catch(() => console.log('thumbnails folder already exists'))
 
     // copy thumbnails
-    // TODO
+    for (let image in selectedImages) {
+      const imagePath = path.join(chosenDirectory, image)
+      const destinationPath = path.join(saveTo, imagesThumbFolder, image)
+      const thumbWidth = 350
+
+      const thumbPromise = sharp(imagePath)
+        .resize(thumbWidth)
+        .jpeg({ quality: 100 })
+        .toFile(destinationPath)
+        .catch(() => {
+          console.log('unable to create a thumbnail')
+        })
+      ops.push(thumbPromise)
+    }
 
     // generate HTML
     let templatePromise = fs.readFile(path.join(__static, '/template.html'), 'utf8')
-    templatePromise.then(template => {
-      const oParser = new DOMParser()
-      const templateDom = oParser.parseFromString(template, 'text/html')
-      const grid = templateDom.querySelector('#grid')
+      .then(template => {
+        const oParser = new DOMParser()
+        const templateDom = oParser.parseFromString(template, 'text/html')
+        const grid = templateDom.querySelector('#grid')
 
-      for (let image in selectedImages) {
-        const imageItemTemplate = `<a href="#"><img src="./${imagesFolder}/${image}"></a>`
-        const li = document.createElement('li')
-        li.innerHTML = imageItemTemplate
-        grid.appendChild(li)
-      }
+        for (let image in selectedImages) {
+          const imageItemTemplate = `<a href="#"><img src="./${imagesThumbFolder}/${image}"></a>`
+          const li = document.createElement('li')
+          li.innerHTML = imageItemTemplate
+          grid.appendChild(li)
+        }
 
-      fs.writeFile(path.join(saveTo, 'index.html'), templateDom.documentElement.outerHTML)
-        .then(() => {
-          Swal.fire(
-            'Good job!',
-            'You have just created the photo memory!',
-            'success'
-          )
-        })
-    })
+        return fs.writeFile(path.join(saveTo, 'index.html'), `<!DOCTYPE html>` + templateDom.documentElement.outerHTML)
+          .catch(() => {
+            console.log('unable to save generated HTML')
+          })
+      })
+      .catch(() => {
+        console.log('unable to read an HTML html')
+      })
+    ops.push(templatePromise)
+
+    return Promise.all(ops)
+      .then(() => {
+        Swal.fire(
+          'Good job!',
+          'You have just created the photo memory!',
+          'success'
+        )
+      })
   }
 }
