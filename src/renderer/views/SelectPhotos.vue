@@ -70,7 +70,7 @@
         </b-form-group>
       </b-form>
       <template slot="modal-footer" slot-scope="{ ok, cancel }">
-        <b-button :disabled="!saveTo" variant="primary" @click="ok()">
+        <b-button :disabled="!saveTo || showLoading" variant="primary" @click="ok()">
           Save
         </b-button>
         <b-button @click="cancel()">
@@ -78,6 +78,8 @@
         </b-button>
       </template>
     </b-modal>
+
+    <b-spinner v-if="showLoading" class="loading-spinner" type="grow" variant="primary" label="Loading..."></b-spinner>
 
   </div>
 </template>
@@ -110,7 +112,8 @@
         saveTo: null,
         resizeTimeout: null,
         resizeDelay: 200,
-        editor: ClassicEditor
+        editor: ClassicEditor,
+        showLoading: false
       }
     },
     methods: {
@@ -171,12 +174,19 @@
       },
 
       onSave () {
+        this.showLoading = true
         this.saveMemory({
           selectedImages: this.selectedImages,
           notes: this.notes,
           description: this.description,
           saveTo: this.saveTo.path
         })
+          .then(() => {
+            this.showLoading = false
+          })
+          .catch(() => {
+            this.showLoading = false
+          })
       }
     },
 
@@ -278,5 +288,16 @@
       margin-top: 8px;
       margin-bottom: 8px;
     }
+  }
+  .loading-spinner {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 9999;
+    bottom: 50%;
+    width: 5rem;
+    height: 5rem;
   }
 </style>
