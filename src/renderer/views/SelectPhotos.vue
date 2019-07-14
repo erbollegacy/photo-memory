@@ -52,7 +52,7 @@
     </footer>
     <!-- End of Footer -->
 
-    <b-modal id="createMemory" okTitle="Save" scrollable size="xl" title="Create a Memory" @ok="saveMemory">
+    <b-modal id="createMemory" okTitle="Save" scrollable size="xl" title="Create a Memory" @ok="onSave()">
       <b-form>
         <b-form-group
             label="Save to:"
@@ -105,16 +105,18 @@
       return {
         images: [],
         selectedImages: {},
-        resizeTimeout: null,
-        resizeDelay: 200,
+        notes: {},
         description: '',
         saveTo: null,
+        resizeTimeout: null,
+        resizeDelay: 200,
         editor: ClassicEditor
       }
     },
     methods: {
       ...mapActions([
-        'scanDirectory'
+        'scanDirectory',
+        'saveMemory'
       ]),
 
       onResize () {
@@ -144,12 +146,15 @@
                 name: image
               }
             })
+            .catch(() => {
+              console.log(`${image} is not a valid image`)
+            })
           sizesPromises.push(size)
         })
 
         Promise.all(sizesPromises)
           .then(sizes => {
-            this.images = sizes
+            this.images = sizes.filter(size => size)
           })
       },
 
@@ -165,9 +170,13 @@
         this.$bvModal.show('createMemory')
       },
 
-      saveMemory () {
-        console.log(this.description)
-        console.log('generate an HTML')
+      onSave () {
+        this.saveMemory({
+          selectedImages: this.selectedImages,
+          notes: this.notes,
+          description: this.description,
+          saveTo: this.saveTo.path
+        })
       }
     },
 
@@ -263,7 +272,7 @@
     text-align: center;
   }
   /deep/ .ck-editor__editable_inline {
-    min-height: 200px;
+    min-height: 140px;
 
     p {
       margin-top: 8px;
