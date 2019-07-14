@@ -121,23 +121,7 @@
       <!-- Content Wrapper -->
       <div id="content-wrapper" class="d-flex flex-column">
 
-        <!-- Main Content -->
-        <div id="content" class="mt-4" style="position: relative">
-
-          <router-view></router-view>
-
-        </div>
-        <!-- End of Main Content -->
-
-        <!-- Footer -->
-        <footer class="sticky-footer bg-white">
-          <div class="container my-auto">
-            <div class="copyright text-center my-auto">
-              <!--<span>Copyright &copy; Your Website 2019</span>-->
-            </div>
-          </div>
-        </footer>
-        <!-- End of Footer -->
+        <router-view></router-view>
 
       </div>
       <!-- End of Content Wrapper -->

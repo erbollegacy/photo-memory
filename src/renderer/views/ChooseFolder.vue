@@ -1,18 +1,21 @@
 <template>
-  <!-- Begin Page Content -->
-  <div class="container-fluid">
+  <!-- Main Content -->
+  <div id="content" class="mt-4" style="position: relative">
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
 
-    <div class="select-btn text-center">
-      <h1 class="h3 mb-0 text-primary">Photo Memory</h1>
-      <hr />
-      <a href="#" @click.prevent="onClicked" class="btn btn-primary btn-icon-split btn-lg">
-        <span class="icon text-white-50">
-          <i class="fas fa-folder"></i>
-        </span>
-        <span class="text">Choose a folder</span>
-      </a>
+      <div class="select-btn text-center">
+        <h1 class="h3 mb-0 text-primary">Photo Memory</h1>
+        <hr />
+        <a href="#" @click.prevent="onClicked" class="btn btn-primary btn-icon-split btn-lg">
+          <span class="icon text-white-50">
+            <i class="fas fa-folder"></i>
+          </span>
+          <span class="text">Choose a folder</span>
+        </a>
+      </div>
+
     </div>
-
   </div>
   <!-- /.container-fluid -->
 </template>

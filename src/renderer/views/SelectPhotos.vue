@@ -1,46 +1,71 @@
 <template>
-  <!-- Begin Page Content -->
-  <div class="container-fluid">
+  <div class="page">
+    <!-- Main Content -->
+    <div id="content" class="mt-4">
+      <!-- Begin Page Content -->
+      <div class="container-fluid">
 
-    <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">Select Photos</h1>
-    </div>
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+          <h1 class="h3 mb-0 text-gray-800">Select Photos</h1>
+        </div>
 
-    <div class="col-md-12" ref="container">
-      <div class="row">
-        <div class="gallery">
-          <div class="image-container" v-for="image in images" :key="image.path">
-            <img v-lazy="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"/>
-            <span class="icon-selected" v-if="selectedImages[image.name]">
+        <div class="col-md-12" ref="container">
+          <div class="row">
+            <div class="gallery">
+              <div class="image-container" v-for="image in images" :key="image.path">
+                <img v-lazy="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"/>
+                <span class="icon-selected" v-if="selectedImages[image.name]">
               <i class="fas fa-check-circle"></i>
             </span>
-            <div class="cover">
-              <div class="actions">
+                <div class="cover">
+                  <div class="actions">
 
-                <!--<a href="#" title="Add a note" class="btn btn-light btn-circle">-->
-                  <!--<i class="fas fa-edit"></i>-->
-                <!--</a>-->
+                    <!--<a href="#" title="Add a note" class="btn btn-light btn-circle">-->
+                    <!--<i class="fas fa-edit"></i>-->
+                    <!--</a>-->
 
-                <a v-if="!selectedImages[image.name]" href="#" title="Select Photo" @click.prevent="select(image.name)" class="btn btn-light btn-circle btn-select">
-                  <i class="fas fa-plus"></i>
-                </a>
-                <a v-else href="#" title="Unselect Photo" @click.prevent="unselect(image.name)" class="btn btn-light btn-circle btn-select">
-                  <i class="fas fa-minus"></i>
-                </a>
+                    <a v-if="!selectedImages[image.name]" href="#" title="Select Photo" @click.prevent="select(image.name)" class="btn btn-light btn-circle btn-select">
+                      <i class="fas fa-plus"></i>
+                    </a>
+                    <a v-else href="#" title="Unselect Photo" @click.prevent="unselect(image.name)" class="btn btn-light btn-circle btn-select">
+                      <i class="fas fa-minus"></i>
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <!-- /.container-fluid -->
     </div>
+    <!-- End of Main Content -->
+
+    <!-- Footer -->
+    <footer class="footer" v-if="images.length">
+      <div class="container-fluid">
+        <a href="#" @click.prevent="showModal" :class="{disabled: !hasSelectedItems}" title="Create a Memory" class="btn btn-primary btn-circle">
+          <i class="fas fa-plus"></i>
+        </a>
+      </div>
+    </footer>
+    <!-- End of Footer -->
+
+    <b-modal id="createMemory" scrollable size="xl" title="Create a Memory" @ok="saveMemory">
+      <b-form>
+        <b-form-group label="Description:">
+          <ckeditor :editor="editor" v-model="description"></ckeditor>
+        </b-form-group>
+      </b-form>
+    </b-modal>
 
   </div>
-  <!-- /.container-fluid -->
 </template>
 
 <script>
   import { mapActions, mapGetters } from 'vuex'
+  import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
   import sharp from 'sharp'
 
   export default {
@@ -49,14 +74,22 @@
       ...mapGetters([
         'chosenDirectory',
         'directoryImages'
-      ])
+      ]),
+
+      hasSelectedItems () {
+        if (this.selectedImages) {
+          return Object.keys(this.selectedImages).length
+        }
+      }
     },
     data () {
       return {
         images: [],
         selectedImages: {},
         resizeTimeout: null,
-        resizeDelay: 200
+        resizeDelay: 200,
+        description: '',
+        editor: ClassicEditor
       }
     },
     methods: {
@@ -106,6 +139,15 @@
 
       unselect (url) {
         this.$delete(this.selectedImages, url)
+      },
+
+      showModal () {
+        this.$bvModal.show('createMemory')
+      },
+
+      saveMemory () {
+        console.log(this.description)
+        console.log('generate an HTML')
       }
     },
 
@@ -192,5 +234,15 @@
         }
       }
     }
+  }
+  .footer {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 -0.30rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    text-align: center;
+  }
+  /deep/ .ck-editor__editable_inline {
+    min-height: 200px;
   }
 </style>

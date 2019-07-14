@@ -1,4 +1,4 @@
 export default {
-  chosenDirectory: '/Users/erick/Desktop/photos',
+  chosenDirectory: '',
   directoryImages: null
 }
