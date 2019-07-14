@@ -52,12 +52,31 @@
     </footer>
     <!-- End of Footer -->
 
-    <b-modal id="createMemory" scrollable size="xl" title="Create a Memory" @ok="saveMemory">
+    <b-modal id="createMemory" okTitle="Save" scrollable size="xl" title="Create a Memory" @ok="saveMemory">
       <b-form>
+        <b-form-group
+            label="Save to:"
+            label-for="saveTo"
+            description="Please choose a path where you'd like to save your Photo Memory"
+        >
+          <b-form-file v-model="saveTo" directory placeholder="Destination path">
+            <template slot="file-name" slot-scope="{ files }">
+              <span>{{ files[0].path }}</span>
+            </template>
+          </b-form-file>
+        </b-form-group>
         <b-form-group label="Description:">
           <ckeditor :editor="editor" v-model="description"></ckeditor>
         </b-form-group>
       </b-form>
+      <template slot="modal-footer" slot-scope="{ ok, cancel }">
+        <b-button :disabled="!saveTo" variant="primary" @click="ok()">
+          Save
+        </b-button>
+        <b-button @click="cancel()">
+          Cancel
+        </b-button>
+      </template>
     </b-modal>
 
   </div>
@@ -89,6 +108,7 @@
         resizeTimeout: null,
         resizeDelay: 200,
         description: '',
+        saveTo: null,
         editor: ClassicEditor
       }
     },
@@ -244,5 +264,10 @@
   }
   /deep/ .ck-editor__editable_inline {
     min-height: 200px;
+
+    p {
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
   }
 </style>
