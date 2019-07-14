@@ -59,6 +59,7 @@ app.on('ready', () => {
 
     sharp(url)
       .resize(width)
+      .jpeg({ quality: 100 })
       .toBuffer()
       .then(data => {
         callbacks({ mimeType: 'image/jpeg', data })
