@@ -69,14 +69,16 @@ export default {
       .then(template => {
         const oParser = new DOMParser()
         const templateDom = oParser.parseFromString(template, 'text/html')
-        const grid = templateDom.querySelector('#grid')
+        const gridEl = templateDom.querySelector('#grid')
+        const descriptionEl = templateDom.querySelector('#description')
 
         for (let image in selectedImages) {
           const imageItemTemplate = `<a href="#"><img src="./${imagesThumbFolder}/${image}"></a>`
           const li = document.createElement('li')
           li.innerHTML = imageItemTemplate
-          grid.appendChild(li)
+          gridEl.appendChild(li)
         }
+        descriptionEl.innerHTML = description
 
         return fs.writeFile(path.join(saveTo, 'index.html'), `<!DOCTYPE html>` + templateDom.documentElement.outerHTML)
           .catch(() => {

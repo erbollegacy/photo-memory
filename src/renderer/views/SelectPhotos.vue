@@ -59,7 +59,7 @@
             label-for="saveTo"
             description="Please choose a path where you'd like to save your Photo Memory"
         >
-          <b-form-file v-model="saveTo" directory placeholder="Destination path">
+          <b-form-file v-model="saveTo" directory :placeholder="saveTo ? saveTo.path : 'Destination path'">
             <template slot="file-name" slot-scope="{ files }">
               <span>{{ files[0].path }}</span>
             </template>
