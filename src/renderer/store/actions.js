@@ -75,6 +75,10 @@ export default {
         for (let image in selectedImages) {
           const imageItemTemplate = `<a href="#"><img src="./${imagesThumbFolder}/${image}"></a>`
           const li = document.createElement('li')
+          li.setAttribute('data-src', `./${imagesFolder}/${image}`)
+          if (notes[image]) {
+            li.setAttribute('data-sub-html', notes[image])
+          }
           li.innerHTML = imageItemTemplate
           gridEl.appendChild(li)
         }
