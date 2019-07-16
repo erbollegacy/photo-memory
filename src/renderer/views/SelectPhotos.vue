@@ -13,11 +13,11 @@
         <div class="col-md-12" ref="container">
           <div class="row">
             <div class="gallery">
-              <div class="image-container" v-for="image in images" :key="image.path">
+              <div class="image-container" v-for="image in images" :key="image.path" :class="{selected: selectedImages[image.name]}">
                 <img v-lazy="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"/>
                 <span class="icon-selected" v-if="selectedImages[image.name]">
-              <i class="fas fa-check-circle"></i>
-            </span>
+                  <i class="fas fa-check-circle"></i>
+                </span>
                 <div class="cover">
                   <div class="actions">
 
@@ -33,6 +33,7 @@
                     </a>
                   </div>
                 </div>
+                <div class="select-cover"></div>
               </div>
             </div>
           </div>
@@ -264,6 +265,19 @@
               background-color: #fff;
             }
           }
+        }
+      }
+
+      &.selected {
+        .select-cover {
+          position: absolute;
+          opacity: 0.5;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: #4e73df;
+          pointer-events: none;
         }
       }
 
