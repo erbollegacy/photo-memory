@@ -89,6 +89,7 @@
   import TextEditor from '../components/TextEditor'
   import 'lightgallery.js/dist/css/lightgallery.min.css'
   import 'lightgallery.js'
+  import Masonry from 'masonry-layout'
 
   export default {
     name: 'choose-folder',
@@ -183,10 +184,19 @@
           .then(sizes => {
             this.images = sizes.filter(size => size)
 
-            if (this.galleryInitialed) {
-              return
-            }
             setTimeout(() => {
+              /* eslint-disable no-new */
+              let msnry = new Masonry('.gallery', {
+                gutter: 10,
+                itemSelector: '.image-container'
+              })
+
+              msnry.layout()
+
+              if (this.galleryInitialed) {
+                return
+              }
+
               const gallery = document.querySelector('.gallery')
               window.lightGallery(gallery)
               this.galleryInitialed = true
@@ -199,7 +209,7 @@
                   originalBuild(index)
                 }
               }
-            }, 10)
+            }, 100)
           })
       },
 
@@ -278,13 +288,11 @@
 
 <style scoped lang="scss">
   .gallery {
-    column-count: 3;
-    column-fill: auto;
-    column-gap: 14px;
+    width: 100%;
 
     .image-container {
       position: relative;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
 
       img {
         width: 100%;
