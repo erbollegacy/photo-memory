@@ -12,8 +12,8 @@
 
         <div class="col-md-12" ref="container">
           <div class="row">
-            <ul class="gallery" @onAfterAppendSubHtml="injectEditor" @onAfterSlide="afterSlide">
-              <li data-sub-html="<div id='editor'></div>" class="image-container" :class="{selected: selectedImages[image.name]}" :href="image.original" @click="showImage(index, image.name)" @dblclick.prevent.stop="toggle(image.name)" v-for="(image, index) in images" :key="image.path">
+            <div class="gallery" @onAfterAppendSubHtml="injectEditor" @onAfterSlide="afterSlide">
+              <div data-sub-html="<div id='editor'></div>" class="image-container" :class="{selected: selectedImages[image.name]}" :href="image.original" @click="showImage(index, image.name)" @dblclick.prevent.stop="toggle(image.name)" v-for="(image, index) in images" :key="image.path">
                 <img v-lazy="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"/>
                 <span class="icon-selected" v-if="selectedImages[image.name]">
                   <i class="fas fa-check-circle"></i>
@@ -30,8 +30,8 @@
                   </div>
                 </div>
                 <div class="select-cover"></div>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
         </div>
 
