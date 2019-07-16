@@ -12,8 +12,8 @@
 
         <div class="col-md-12" ref="container">
           <div class="row">
-            <div class="gallery">
-              <div class="image-container" @dblclick.prevent="toggle(image.name)" v-for="image in images" :key="image.path" :class="{selected: selectedImages[image.name]}">
+            <ul class="gallery" @onAfterAppendSubHtml="injectEditor" @onAfterSlide="afterSlide">
+              <li data-sub-html="<div id='editor'></div>" class="image-container" :class="{selected: selectedImages[image.name]}" :href="image.original" @click="showImage(index, image.name)" @dblclick.prevent.stop="toggle(image.name)" v-for="(image, index) in images" :key="image.path">
                 <img v-lazy="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"/>
                 <span class="icon-selected" v-if="selectedImages[image.name]">
                   <i class="fas fa-check-circle"></i>
@@ -21,21 +21,17 @@
                 <div class="cover">
                   <div class="actions">
 
-                    <!--<a href="#" title="Add a note" class="btn btn-light btn-circle">-->
-                    <!--<i class="fas fa-edit"></i>-->
-                    <!--</a>-->
-
-                    <a v-if="!selectedImages[image.name]" href="#" title="Select Photo" @click.prevent="select(image.name)" class="btn btn-light btn-circle btn-select">
+                    <a v-if="!selectedImages[image.name]" href="#" title="Select Photo" @click.prevent.stop="select(image.name)" class="btn btn-light btn-circle btn-select">
                       <i class="fas fa-plus"></i>
                     </a>
-                    <a v-else href="#" title="Unselect Photo" @click.prevent="unselect(image.name)" class="btn btn-light btn-circle btn-select">
+                    <a v-else href="#" title="Unselect Photo" @click.prevent.stop="unselect(image.name)" class="btn btn-light btn-circle btn-select">
                       <i class="fas fa-minus"></i>
                     </a>
                   </div>
                 </div>
                 <div class="select-cover"></div>
-              </div>
-            </div>
+              </li>
+            </ul>
           </div>
         </div>
 
@@ -86,9 +82,13 @@
 </template>
 
 <script>
+  import Vue from 'vue'
   import { mapActions, mapGetters } from 'vuex'
   import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
   import sharp from 'sharp'
+  import TextEditor from '../components/TextEditor'
+  import 'lightgallery.js/dist/css/lightgallery.min.css'
+  import 'lightgallery.js'
 
   export default {
     name: 'choose-folder',
@@ -109,12 +109,15 @@
         images: [],
         selectedImages: {},
         notes: {},
+        selectedImageName: null,
         description: '',
         saveTo: null,
         resizeTimeout: null,
         resizeDelay: 200,
         editor: ClassicEditor,
-        showLoading: false
+        showLoading: false,
+        photoTextEditor: null,
+        galleryInitialed: false
       }
     },
     methods: {
@@ -122,6 +125,25 @@
         'scanDirectory',
         'saveMemory'
       ]),
+
+      injectEditor () {
+        setTimeout(() => {
+          document.querySelector('#editor').appendChild(this.photoTextEditor.$el)
+        })
+      },
+
+      afterSlide (event) {
+        let newSlide = window.lgData.lg0.items[event.detail.index]
+        if (newSlide) {
+          let name = newSlide.attributes.href.value.split('/').pop()
+          this.selectedImageName = name
+          this.photoTextEditor.setValue(this.notes[this.selectedImageName])
+
+          setTimeout(() => {
+            document.querySelector('.ck-content').focus()
+          }, 100)
+        }
+      },
 
       onResize () {
         clearTimeout(this.resizeTimeout)
@@ -147,6 +169,7 @@
                 width,
                 height,
                 path: `thumb://${this.chosenDirectory}/${image}?w=${parseInt(width)}`,
+                original: `orig://${this.chosenDirectory}/${image}`,
                 name: image
               }
             })
@@ -159,27 +182,56 @@
         Promise.all(sizesPromises)
           .then(sizes => {
             this.images = sizes.filter(size => size)
+
+            if (this.galleryInitialed) {
+              return
+            }
+            setTimeout(() => {
+              const gallery = document.querySelector('.gallery')
+              window.lightGallery(gallery)
+              this.galleryInitialed = true
+
+              // hack light gallery a bit
+              const plugin = window.lgData[gallery.getAttribute('lg-uid')]
+              let originalBuild = plugin.build.bind(plugin)
+              plugin.build = (index, manual) => {
+                if (manual) {
+                  originalBuild(index)
+                }
+              }
+            }, 10)
           })
       },
 
-      select (url) {
-        this.$set(this.selectedImages, url, true)
+      select (name) {
+        this.$set(this.selectedImages, name, true)
       },
 
-      unselect (url) {
-        this.$delete(this.selectedImages, url)
+      unselect (name) {
+        this.$delete(this.selectedImages, name)
       },
 
-      toggle (url) {
-        if (!this.selectedImages[url]) {
-          this.select(url)
+      toggle (name) {
+        if (!this.selectedImages[name]) {
+          this.select(name)
         } else {
-          this.unselect(url)
+          this.unselect(name)
         }
       },
 
       showModal () {
         this.$bvModal.show('createMemory')
+      },
+
+      showImage (index, name) {
+        this.selectedImageName = name
+        this.photoTextEditor.setValue(this.notes[this.selectedImageName])
+        const gallery = document.querySelector('.gallery')
+        const plugin = window.lgData[gallery.getAttribute('lg-uid')]
+        plugin.build(index, true)
+        setTimeout(() => {
+          document.querySelector('.ck-content').focus()
+        }, 100)
       },
 
       onSave () {
@@ -200,6 +252,13 @@
     },
 
     mounted () {
+      this.photoTextEditor = new (Vue.extend(TextEditor))()
+      this.photoTextEditor.$mount()
+      this.photoTextEditor.$on('input', (note) => {
+        this.$set(this.notes, this.selectedImageName, note)
+        this.$set(this.selectedImages, this.selectedImageName, true)
+      })
+
       if (this.chosenDirectory) {
         this.scanDirectory(this.chosenDirectory)
           .then(() => this.updateImages())
@@ -212,6 +271,7 @@
 
     destroyed () {
       window.removeEventListener('resize', this.onResize)
+      this.photoTextEditor.$destroy()
     }
   }
 </script>
@@ -324,5 +384,8 @@
   }
   .page {
     position: relative;
+  }
+  #caption2 {
+    position: absolute;
   }
 </style>

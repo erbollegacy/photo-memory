@@ -3,6 +3,7 @@
 import { app, BrowserWindow, protocol } from 'electron'
 import sharp from 'sharp'
 import queryString from 'query-string'
+import path from 'path'
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -64,6 +65,14 @@ app.on('ready', () => {
       .then(data => {
         callbacks({ mimeType: 'image/jpeg', data })
       })
+  })
+
+  console.log('registering orig protocol')
+  protocol.registerFileProtocol('orig', (request, callbacks) => {
+    const url = request.url.substr(7)
+    callbacks({ path: path.normalize(`${url}`) })
+  }, (error) => {
+    if (error) console.error('Failed to register protocol')
   })
 })
 
