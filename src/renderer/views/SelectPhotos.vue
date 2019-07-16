@@ -13,7 +13,7 @@
         <div class="col-md-12" ref="container">
           <div class="row">
             <div class="gallery">
-              <div class="image-container" v-for="image in images" :key="image.path" :class="{selected: selectedImages[image.name]}">
+              <div class="image-container" @dblclick.prevent="toggle(image.name)" v-for="image in images" :key="image.path" :class="{selected: selectedImages[image.name]}">
                 <img v-lazy="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"/>
                 <span class="icon-selected" v-if="selectedImages[image.name]">
                   <i class="fas fa-check-circle"></i>
@@ -168,6 +168,14 @@
 
       unselect (url) {
         this.$delete(this.selectedImages, url)
+      },
+
+      toggle (url) {
+        if (!this.selectedImages[url]) {
+          this.select(url)
+        } else {
+          this.unselect(url)
+        }
       },
 
       showModal () {
