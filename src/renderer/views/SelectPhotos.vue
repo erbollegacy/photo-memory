@@ -190,7 +190,8 @@
               /* eslint-disable no-new */
               let msnry = new Masonry('.gallery', {
                 gutter: 10,
-                itemSelector: '.image-container'
+                itemSelector: '.image-container',
+                resize: false
               })
 
               msnry.layout()
