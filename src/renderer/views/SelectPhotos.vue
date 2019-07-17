@@ -89,6 +89,8 @@
   import TextEditor from '../components/TextEditor'
   import 'lightgallery.js/dist/css/lightgallery.min.css'
   import 'lightgallery.js'
+  import 'lg-zoom.js'
+  import 'lg-autoplay.js'
   import Masonry from 'masonry-layout'
 
   export default {

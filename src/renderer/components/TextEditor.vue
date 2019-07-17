@@ -24,19 +24,15 @@
 
 <style lang="scss">
   .text-editor {
-    opacity: 0.1;
     margin: auto;
     transition: all 1s;
-
-    &:hover {
-      opacity: 0.8;
-    }
 
     /deep/ .ck-content {
       min-height: 100px;
 
       &.ck-focused {
         border-color: var(--ck-color-base-border) !important;
+        box-shadow: none !important;
       }
     }
   }
