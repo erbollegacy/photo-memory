@@ -12,7 +12,7 @@
 
         <div class="col-md-12" ref="container">
           <div class="row">
-            <div class="gallery" @onAfterAppendSubHtml="injectEditor" @onAfterSlide="afterSlide">
+            <div class="gallery" @onAfterAppendSubHtml="injectEditor" @onBeforeSlide="afterSlide">
               <div data-sub-html="<div id='editor'></div>" class="image-container" :class="{selected: selectedImages[image.name]}" :href="image.original" @click="showImage(index, image.name)" @dblclick.prevent.stop="toggle(image.name)" v-for="(image, index) in images" :key="image.path">
                 <img v-lazy="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"/>
                 <span class="icon-selected" v-if="selectedImages[image.name]">
@@ -144,7 +144,7 @@
 
           setTimeout(() => {
             document.querySelector('.ck-content').focus()
-          }, 100)
+          }, 1000)
         }
       },
 
