@@ -26,7 +26,7 @@ export default {
     })
   },
 
-  saveMemory ({getters, commit}, { selectedImages, notes, description, saveTo }) {
+  saveMemory ({getters, commit}, { selectedImagesNames, notes, description, saveTo }) {
     // copy images
     const fs = require('fs').promises
     const path = require('path')
@@ -38,7 +38,7 @@ export default {
     fs.mkdir(path.join(saveTo, imagesFolder))
       .catch(() => console.log('images folder already exists'))
 
-    for (let image in selectedImages) {
+    for (let image in selectedImagesNames) {
       const imagePath = path.join(chosenDirectory, image)
       const destinationPath = path.join(saveTo, imagesFolder, image)
       const imagePromise = fs.copyFile(imagePath, destinationPath)
@@ -49,7 +49,7 @@ export default {
       .catch(() => console.log('thumbnails folder already exists'))
 
     // copy thumbnails
-    for (let image in selectedImages) {
+    for (let image in selectedImagesNames) {
       const imagePath = path.join(chosenDirectory, image)
       const destinationPath = path.join(saveTo, imagesThumbFolder, image)
       const thumbWidth = 350
@@ -72,7 +72,7 @@ export default {
         const gridEl = templateDom.querySelector('#grid')
         const descriptionEl = templateDom.querySelector('#description')
 
-        for (let image in selectedImages) {
+        for (let image in selectedImagesNames) {
           const imageItemTemplate = `<a href="#"><img src="./${imagesThumbFolder}/${image}"></a>`
           const li = document.createElement('li')
           li.setAttribute('data-src', `./${imagesFolder}/${image}`)
