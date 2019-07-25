@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div class="wrapper">
     <div class="col-md-12" ref="container">
       <div class="row">
         <div class="preview gallery" @onAfterAppendSubHtml="injectEditor" @onBeforeSlide="afterSlide">
@@ -7,7 +7,7 @@
                class="image-container"
                :href="image.original"
                @click="showImage(index, image.name)"
-               v-for="(image, index) in images" :key="image.path">
+               v-for="(image, index) in thumbs" :key="image.path">
             <img v-lazy="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"/>
           </div>
         </div>
@@ -35,7 +35,8 @@
         notes: {},
         photoTextEditor: null,
         selectedImageName: null,
-        galleryInitialed: false
+        galleryInitialed: false,
+        thumbs: []
       }
     },
     methods: {
@@ -107,8 +108,27 @@
       })
 
       setTimeout(() => {
+        const containerWidth = this.$refs.container.offsetWidth
+
+        this.thumbs = this.images.map(image => {
+          let columnWidth = (containerWidth / 3) - 14
+          let ratio = image.width / columnWidth
+          let height = image.height / ratio
+          let width = columnWidth
+
+          return {
+            width,
+            height,
+            path: image.path.replace(image.width, width),
+            original: image.original,
+            name: image
+          }
+        })
+      }, 100)
+
+      setTimeout(() => {
         this.initGallery()
-      })
+      }, 200)
     },
 
     destroyed () {
@@ -118,13 +138,14 @@
   }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
   .gallery {
     width: 100%;
 
     .image-container {
       position: relative;
       margin-bottom: 10px;
+      width: 32%;
 
       img {
         width: 100%;
@@ -195,5 +216,11 @@
         }
       }
     }
+  }
+
+  .wrapper {
+    padding: 0;
+    max-height: calc(100vh - 110px - 340px);
+    overflow: auto;
   }
 </style>
