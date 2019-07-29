@@ -6,9 +6,9 @@
           <div data-sub-html="<div id='editor'></div>"
                class="image-container"
                :href="image.original"
-               @click="showImage(index, image.name)"
-               v-for="(image, index) in thumbs" :key="image.path">
-            <img v-lazy="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"/>
+               :style="{width: image.width + 'px', height: image.height + 'px'}"
+               v-for="(image, index) in thumbs">
+            <img v-lazy="image.path" :key="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"/>
           </div>
         </div>
       </div>
@@ -36,7 +36,13 @@
         photoTextEditor: null,
         selectedImageName: null,
         galleryInitialed: false,
-        thumbs: []
+        thumbs: [],
+        columnsCount: 3,
+        columnIndent: 7,
+        resizeTimeout: null,
+        resizeDelay: 200,
+        containerWidth: null,
+        msnry: null
       }
     },
     methods: {
@@ -71,14 +77,18 @@
       },
 
       initGallery () {
+        if (this.msnry) {
+          this.msnry.destroy()
+        }
+
         /* eslint-disable no-new */
-        let msnry = new Masonry('.preview', {
+        this.msnry = new Masonry('.preview', {
           gutter: 10,
           itemSelector: '.image-container',
           resize: false
         })
 
-        msnry.layout()
+        this.msnry.layout()
 
         if (this.galleryInitialed) {
           return
@@ -87,31 +97,18 @@
         const gallery = document.querySelector('.preview')
         window.lightGallery(gallery)
         this.galleryInitialed = true
+      },
 
-        // hack the light gallery a bit
-        const plugin = window.lgData[gallery.getAttribute('lg-uid')]
-        let originalBuild = plugin.build.bind(plugin)
-        plugin.build = (index, manual) => {
-          if (manual) {
-            originalBuild(index)
-          }
-        }
-      }
-    },
-
-    mounted () {
-      this.photoTextEditor = new (Vue.extend(TextEditor))()
-      this.photoTextEditor.$mount()
-      this.photoTextEditor.$on('input', (note) => {
-        this.$set(this.notes, this.selectedImageName, note)
-        this.$set(this.selectedImagesNames, this.selectedImageName, true)
-      })
-
-      setTimeout(() => {
+      updateImages () {
         const containerWidth = this.$refs.container.offsetWidth
+        if (containerWidth !== this.containerWidth) {
+          this.containerWidth = containerWidth
+        } else {
+          return
+        }
 
         this.thumbs = this.images.map(image => {
-          let columnWidth = (containerWidth / 3) - 14
+          let columnWidth = (containerWidth / this.columnsCount) - this.columnIndent
           let ratio = image.width / columnWidth
           let height = image.height / ratio
           let width = columnWidth
@@ -124,11 +121,32 @@
             name: image
           }
         })
-      }, 100)
+
+        setTimeout(() => {
+          this.initGallery()
+        }, 100)
+      },
+
+      onResize () {
+        clearTimeout(this.resizeTimeout)
+        this.resizeTimeout = setTimeout(() => {
+          this.updateImages()
+        }, this.resizeDelay)
+      }
+    },
+
+    mounted () {
+      this.photoTextEditor = new (Vue.extend(TextEditor))()
+      this.photoTextEditor.$mount()
+      this.photoTextEditor.$on('input', (note) => {
+        this.$set(this.notes, this.selectedImageName, note)
+        this.$set(this.selectedImagesNames, this.selectedImageName, true)
+      })
 
       setTimeout(() => {
-        this.initGallery()
-      }, 200)
+        this.updateImages()
+        window.addEventListener('resize', this.onResize)
+      }, 100)
     },
 
     destroyed () {
@@ -146,6 +164,7 @@
       position: relative;
       margin-bottom: 10px;
       width: 32%;
+      cursor: zoom-in;
 
       img {
         width: 100%;

@@ -54,8 +54,8 @@
       <photos-previewer :images="images"></photos-previewer>
 
       <b-form>
-        <b-form-group label="Description:">
-          <ckeditor :editor="editor" v-model="description"></ckeditor>
+        <b-form-group class="memory-desc">
+          <ckeditor :editor="editor" v-model="description" :config="editorConfig"></ckeditor>
         </b-form-group>
       </b-form>
 
@@ -104,6 +104,9 @@
         resizeTimeout: null,
         resizeDelay: 200,
         editor: ClassicEditor,
+        editorConfig: {
+          placeholder: 'Description'
+        },
         showLoading: false
       }
     },
@@ -327,5 +330,9 @@
   }
   #caption2 {
     position: absolute;
+  }
+  /deep/ .memory-desc {
+    margin-bottom: 0;
+    margin-top: 10px;
   }
 </style>
