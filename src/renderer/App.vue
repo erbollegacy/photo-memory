@@ -32,12 +32,12 @@
 
 <!--        <hr class="sidebar-divider my-0">-->
 
-        <li class="nav-item">
-          <router-link class="nav-link" to="/memories">
-            <i class="fas fa-fw fa-folder"></i>
-            <span>Memories</span>
-          </router-link>
-        </li>
+<!--        <li class="nav-item">-->
+<!--          <router-link class="nav-link" to="/memories">-->
+<!--            <i class="fas fa-fw fa-folder"></i>-->
+<!--            <span>Memories</span>-->
+<!--          </router-link>-->
+<!--        </li>-->
 
 
         <!-- Divider -->

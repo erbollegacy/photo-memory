@@ -12,7 +12,7 @@
 
       <div class="row">
 
-        <div class="col-lg-6">
+        <div class="col-lg-12">
 
           <!-- Basic Card Example -->
           <div class="card shadow mb-4">
@@ -22,11 +22,21 @@
             <div class="card-body">
               <b-form>
                 <b-form-group
-                    label="Save to:"
+                    label="Source:"
                     label-for="saveTo"
-                    description="Please choose a path where you'd like to save your Photo Memory"
                 >
-                  <b-form-file v-model="saveTo" directory placeholder="Destination path">
+                  <b-form-file v-model="sourcePath" directory placeholder="Source path">
+                    <template slot="file-name" slot-scope="{ files }">
+                      <span>{{ files[0].path }}</span>
+                    </template>
+                  </b-form-file>
+                </b-form-group>
+
+                <b-form-group
+                    label="Destination:"
+                    label-for="saveTo"
+                >
+                  <b-form-file v-model="destinationPath" directory placeholder="Destination path">
                     <template slot="file-name" slot-scope="{ files }">
                       <span>{{ files[0].path }}</span>
                     </template>
@@ -34,7 +44,9 @@
                 </b-form-group>
               </b-form>
 
-              <b-button :disabled="!saveTo" variant="primary" @click="ok()">
+            </div>
+            <div class="card-footer">
+              <b-button variant="primary" @click="save()">
                 Save
               </b-button>
             </div>
