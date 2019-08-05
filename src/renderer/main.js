@@ -22,3 +22,5 @@ new Vue({
   store,
   template: '<App/>'
 }).$mount('#app')
+
+store.dispatch('initSettings')

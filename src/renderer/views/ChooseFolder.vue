@@ -1,6 +1,6 @@
 <template>
   <!-- Main Content -->
-  <div id="content" class="mt-4" style="position: relative">
+  <div id="content" class="mt-4">
     <!-- Begin Page Content -->
     <div class="container-fluid">
 
@@ -21,10 +21,13 @@
 </template>
 
 <script>
-  import { mapActions } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
 
   export default {
     name: 'choose-folder',
+    computed: {
+      ...mapGetters(['sourcePath'])
+    },
     methods: {
       ...mapActions([
         'chooseDirectory',
@@ -32,6 +35,12 @@
       ]),
       async onClicked () {
         await this.chooseDirectory()
+        this.$router.push('select-photos')
+      }
+    },
+
+    mounted () {
+      if (this.sourcePath) {
         this.$router.push('select-photos')
       }
     }

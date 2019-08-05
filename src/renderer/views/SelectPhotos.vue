@@ -84,7 +84,7 @@
     components: { PhotosPreviewer },
     computed: {
       ...mapGetters([
-        'chosenDirectory',
+        'sourcePath',
         'directoryImages'
       ]),
 
@@ -128,7 +128,7 @@
         const containerWidth = this.$refs.container.offsetWidth
 
         this.directoryImages.forEach(image => {
-          let size = sharp(`${this.chosenDirectory}/${image}`)
+          let size = sharp(`${this.sourcePath}/${image}`)
             .metadata()
             .then(({ width, height }) => {
               let columnWidth = (containerWidth / 3) - 7
@@ -139,8 +139,8 @@
               return {
                 width,
                 height,
-                path: `thumb://${this.chosenDirectory}/${image}?w=${parseInt(width)}`,
-                original: `orig://${this.chosenDirectory}/${image}`,
+                path: `thumb://${this.sourcePath}/${image}?w=${parseInt(width)}`,
+                original: `orig://${this.sourcePath}/${image}`,
                 name: image
               }
             })
@@ -205,8 +205,8 @@
     },
 
     mounted () {
-      if (this.chosenDirectory) {
-        this.scanDirectory(this.chosenDirectory)
+      if (this.sourcePath) {
+        this.scanDirectory(this.sourcePath)
           .then(() => this.updateImages())
 
         window.addEventListener('resize', this.onResize)

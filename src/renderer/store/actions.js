@@ -33,13 +33,13 @@ export default {
     const ops = []
     const imagesFolder = 'images'
     const imagesThumbFolder = 'thumb'
-    const { chosenDirectory } = getters
+    const { sourcePath } = getters
 
     fs.mkdir(path.join(saveTo, imagesFolder))
       .catch(() => console.log('images folder already exists'))
 
     for (let image in selectedImagesNames) {
-      const imagePath = path.join(chosenDirectory, image)
+      const imagePath = path.join(sourcePath, image)
       const destinationPath = path.join(saveTo, imagesFolder, image)
       const imagePromise = fs.copyFile(imagePath, destinationPath)
       ops.push(imagePromise)
@@ -50,7 +50,7 @@ export default {
 
     // copy thumbnails
     for (let image in selectedImagesNames) {
-      const imagePath = path.join(chosenDirectory, image)
+      const imagePath = path.join(sourcePath, image)
       const destinationPath = path.join(saveTo, imagesThumbFolder, image)
       const thumbWidth = 350
 
@@ -102,5 +102,23 @@ export default {
           'success'
         )
       })
+  },
+
+  initSettings ({ commit }) {
+    let sourcePath = localStorage.getItem('sourcePath')
+    let destinationPath = localStorage.getItem('destinationPath')
+
+    commit('setSourcePath', sourcePath)
+    commit('setDestinationPath', destinationPath)
+  },
+
+  setSourcePath ({getters, commit}, directory) {
+    localStorage.setItem('sourcePath', directory)
+    commit('setSourcePath', directory)
+  },
+
+  setDestinationPath ({getters, commit}, directory) {
+    localStorage.setItem('destinationPath', directory)
+    commit('setDestinationPath', directory)
   }
 }

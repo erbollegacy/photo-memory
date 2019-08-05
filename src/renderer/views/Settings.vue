@@ -25,7 +25,7 @@
                     label="Source:"
                     label-for="saveTo"
                 >
-                  <b-form-file v-model="sourcePath" directory placeholder="Source path">
+                  <b-form-file :value="sourcePath" @input="updatePath('sourcePath', $event.path)" directory :placeholder="sourcePath || 'Source path'">
                     <template slot="file-name" slot-scope="{ files }">
                       <span>{{ files[0].path }}</span>
                     </template>
@@ -36,7 +36,7 @@
                     label="Destination:"
                     label-for="saveTo"
                 >
-                  <b-form-file v-model="destinationPath" directory placeholder="Destination path">
+                  <b-form-file :value="destinationPath" @input="updatePath('destinationPath', $event.path)" directory :placeholder="destinationPath || 'Destination path'">
                     <template slot="file-name" slot-scope="{ files }">
                       <span>{{ files[0].path }}</span>
                     </template>
@@ -46,7 +46,7 @@
 
             </div>
             <div class="card-footer">
-              <b-button variant="primary" @click="save()">
+              <b-button :disabled="!touched" variant="primary" @click="save()">
                 Save
               </b-button>
             </div>
@@ -62,8 +62,45 @@
 </template>
 
 <script>
+  import Swal from 'sweetalert2'
+
   export default {
-    name: 'landing-page'
+    name: 'settings',
+    data () {
+      return {
+        sourcePath: null,
+        destinationPath: null,
+        touched: false
+      }
+    },
+    mounted () {
+      setTimeout(() => {
+        this.sourcePath = this.$store.getters.sourcePath
+        this.destinationPath = this.$store.getters.destinationPath
+      })
+    },
+    methods: {
+      updatePath (path, value) {
+        this.touched = true
+        this[path] = value
+      },
+      save () {
+        if (this.sourcePath) {
+          this.$store.dispatch('setSourcePath', this.sourcePath)
+        }
+        if (this.destinationPath) {
+          this.$store.dispatch('setDestinationPath', this.destinationPath)
+        }
+
+        Swal.fire(
+          'Good job!',
+          'All changes are successfully applied!',
+          'success'
+        )
+
+        this.touched = false
+      }
+    }
   }
 </script>
 
