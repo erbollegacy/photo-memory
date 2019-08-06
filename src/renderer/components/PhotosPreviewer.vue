@@ -32,17 +32,19 @@
     },
     data () {
       return {
-        notes: {},
         photoTextEditor: null,
         selectedImageName: null,
-        galleryInitialed: false,
+        notes: {},
         thumbs: [],
+
         columnsCount: 3,
         columnIndent: 7,
-        resizeTimeout: null,
-        resizeDelay: 200,
         containerWidth: null,
-        msnry: null
+        resizeTimeout: null,
+
+        resizeDelay: 200,
+        msnry: null,
+        galleryInitialed: false
       }
     },
     methods: {

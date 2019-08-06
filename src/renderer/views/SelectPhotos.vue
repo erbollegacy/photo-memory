@@ -13,14 +13,14 @@
         <div class="col-md-12" ref="container">
           <div class="row">
             <div class="gallery">
-              <div class="image-container" :class="{selected: selectedImagesNames[image.name]}" @click.prevent.stop="toggle(image.name)" v-for="(image, index) in images" :key="image.path">
+              <div class="image-container" :class="{selected: selectedImages.names[image.name]}" @click.prevent.stop="toggle(image.name)" v-for="(image, index) in thumbnails" :key="image.path">
                 <img v-lazy="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"/>
-                <span class="icon-selected" v-if="selectedImagesNames[image.name]">
+                <span class="icon-selected" v-if="selectedImages.names[image.name]">
                   <i class="fas fa-check-circle"></i>
                 </span>
                 <div class="cover">
                   <div class="actions">
-                    <a v-if="!selectedImagesNames[image.name]" href="#" title="Select Photo" @click.prevent.stop="select(image.name)" class="btn btn-light btn-circle btn-select">
+                    <a v-if="!selectedImages.names[image.name]" href="#" title="Select Photo" @click.prevent.stop="select(image.name)" class="btn btn-light btn-circle btn-select">
                       <i class="fas fa-plus"></i>
                     </a>
                     <a v-else href="#" title="Unselect Photo" @click.prevent.stop="unselect(image.name)" class="btn btn-light btn-circle btn-select">
@@ -41,7 +41,7 @@
     <!-- End of Main Content -->
 
     <!-- Footer -->
-    <footer class="footer" v-if="images.length">
+    <footer class="footer" v-if="thumbnails.length">
       <div class="container-fluid">
         <a href="#" @click.prevent="showModal" :class="{disabled: !hasSelectedItems}" title="Create a Memory" class="btn btn-primary btn-circle">
           <i class="fas fa-plus"></i>
@@ -51,7 +51,7 @@
     <!-- End of Footer -->
 
     <b-modal lazy id="createMemory" okTitle="Save" scrollable size="xl" title="Create a Memory" @ok="onSave()">
-      <photos-previewer :images="images"></photos-previewer>
+      <photos-previewer :images="selectedImages.thumbnails"></photos-previewer>
 
       <b-form>
         <b-form-group class="memory-desc">
@@ -60,7 +60,7 @@
       </b-form>
 
       <template slot="modal-footer" slot-scope="{ ok, cancel }">
-        <b-button :disabled="!saveTo || showLoading" variant="primary" @click="ok()">
+        <b-button :disabled="showLoading" variant="primary" @click="ok()">
           Save
         </b-button>
         <b-button @click="cancel()">
@@ -85,24 +85,30 @@
     computed: {
       ...mapGetters([
         'sourcePath',
-        'directoryImages'
+        'destinationPath',
+        'scannedImages'
       ]),
 
       hasSelectedItems () {
-        if (this.selectedImagesNames) {
-          return Object.keys(this.selectedImagesNames).length
+        if (this.selectedImages.names) {
+          return Object.keys(this.selectedImages.names).length
         }
       }
     },
     data () {
       return {
-        images: [],
-        selectedImagesNames: {},
+        thumbnails: [],
+        selectedImages: {
+          names: {},
+          thumbnails: []
+        },
+
         notes: {},
         description: '',
-        saveTo: null,
+
         resizeTimeout: null,
         resizeDelay: 200,
+
         editor: ClassicEditor,
         editorConfig: {
           placeholder: 'Description'
@@ -127,7 +133,7 @@
         const sizesPromises = []
         const containerWidth = this.$refs.container.offsetWidth
 
-        this.directoryImages.forEach(image => {
+        this.scannedImages.forEach(image => {
           let size = sharp(`${this.sourcePath}/${image}`)
             .metadata()
             .then(({ width, height }) => {
@@ -152,7 +158,7 @@
 
         Promise.all(sizesPromises)
           .then(sizes => {
-            this.images = sizes.filter(size => size)
+            this.thumbnails = sizes.filter(size => size)
 
             setTimeout(() => {
               /* eslint-disable no-new */
@@ -168,15 +174,15 @@
       },
 
       select (name) {
-        this.$set(this.selectedImagesNames, name, true)
+        this.$set(this.selectedImages.names, name, true)
       },
 
       unselect (name) {
-        this.$delete(this.selectedImagesNames, name)
+        this.$delete(this.selectedImages.names, name)
       },
 
       toggle (name) {
-        if (!this.selectedImagesNames[name]) {
+        if (!this.selectedImages.names[name]) {
           this.select(name)
         } else {
           this.unselect(name)
@@ -184,16 +190,18 @@
       },
 
       showModal () {
+        this.selectedImages.thumbnails = this.thumbnails.filter(item => {
+          return item.name in this.selectedImages.names
+        })
         this.$bvModal.show('createMemory')
       },
 
       onSave () {
         this.showLoading = true
         this.saveMemory({
-          selectedImagesNames: this.selectedImagesNames,
+          selectedImagesNames: this.selectedImages.names,
           notes: this.notes,
-          description: this.description,
-          saveTo: this.saveTo.path
+          description: this.description
         })
           .then(() => {
             this.showLoading = false

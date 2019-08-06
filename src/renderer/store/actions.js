@@ -4,10 +4,13 @@ import Swal from 'sweetalert2'
 import sharp from 'sharp'
 
 export default {
-  chooseDirectory ({commit}) {
+  chooseDirectory ({dispatch}) {
     return new Promise((resolve) => {
       remote.dialog.showOpenDialog({ properties: ['openDirectory'] }, (filePaths) => {
-        commit('setChosenDirectory', filePaths[0])
+        if (!filePaths) {
+          return resolve()
+        }
+        dispatch('setSourcePath', filePaths[0])
         resolve(filePaths[0])
       })
     })
@@ -20,44 +23,44 @@ export default {
           return reject(err)
         }
         const withExtension = files.filter(file => !file.startsWith('.') && file.split('.').length > 1)
-        commit('setDirectoryImages', withExtension)
+        commit('setScannedImages', withExtension)
         resolve(withExtension)
       })
     })
   },
 
-  saveMemory ({getters, commit}, { selectedImagesNames, notes, description, saveTo }) {
+  saveMemory ({getters, commit}, { selectedImagesNames, notes, description }) {
     // copy images
     const fs = require('fs').promises
     const path = require('path')
     const ops = []
     const imagesFolder = 'images'
     const imagesThumbFolder = 'thumb'
-    const { sourcePath } = getters
+    const { sourcePath, destinationPath } = getters
 
-    fs.mkdir(path.join(saveTo, imagesFolder))
+    fs.mkdir(path.join(destinationPath, imagesFolder))
       .catch(() => console.log('images folder already exists'))
 
     for (let image in selectedImagesNames) {
       const imagePath = path.join(sourcePath, image)
-      const destinationPath = path.join(saveTo, imagesFolder, image)
-      const imagePromise = fs.copyFile(imagePath, destinationPath)
+      const imgDestinationPath = path.join(destinationPath, imagesFolder, image)
+      const imagePromise = fs.copyFile(imagePath, imgDestinationPath)
       ops.push(imagePromise)
     }
 
-    fs.mkdir(path.join(saveTo, imagesThumbFolder))
+    fs.mkdir(path.join(destinationPath, imagesThumbFolder))
       .catch(() => console.log('thumbnails folder already exists'))
 
     // copy thumbnails
     for (let image in selectedImagesNames) {
       const imagePath = path.join(sourcePath, image)
-      const destinationPath = path.join(saveTo, imagesThumbFolder, image)
+      const imgDestinationPath = path.join(destinationPath, imagesThumbFolder, image)
       const thumbWidth = 350
 
       const thumbPromise = sharp(imagePath)
         .resize(thumbWidth)
         .jpeg({ quality: 100 })
-        .toFile(destinationPath)
+        .toFile(imgDestinationPath)
         .catch(() => {
           console.log('unable to create a thumbnail')
         })
@@ -84,7 +87,7 @@ export default {
         }
         descriptionEl.innerHTML = description
 
-        return fs.writeFile(path.join(saveTo, 'index.html'), `<!DOCTYPE html>` + templateDom.documentElement.outerHTML)
+        return fs.writeFile(path.join(destinationPath, 'index.html'), `<!DOCTYPE html>` + templateDom.documentElement.outerHTML)
           .catch(() => {
             console.log('unable to save generated HTML')
           })

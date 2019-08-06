@@ -7,7 +7,7 @@ export default {
     state.destinationPath = directory
   },
 
-  setDirectoryImages: (state, directory) => {
-    state.directoryImages = directory
+  setScannedImages: (state, images) => {
+    state.scannedImages = images
   }
 }

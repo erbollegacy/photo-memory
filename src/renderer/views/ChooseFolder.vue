@@ -11,7 +11,7 @@
           <span class="icon text-white-50">
             <i class="fas fa-folder"></i>
           </span>
-          <span class="text">Choose a folder</span>
+          <span class="text">Choose folders</span>
         </a>
       </div>
 
@@ -34,8 +34,8 @@
         'scanDirectory'
       ]),
       async onClicked () {
-        await this.chooseDirectory()
-        this.$router.push('select-photos')
+        // await this.chooseDirectory()
+        this.$router.push('settings')
       }
     },
 

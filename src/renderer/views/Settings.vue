@@ -46,7 +46,7 @@
 
             </div>
             <div class="card-footer">
-              <b-button :disabled="!touched" variant="primary" @click="save()">
+              <b-button :disabled="!touched || !sourcePath || !destinationPath" variant="primary" @click="save()">
                 Save
               </b-button>
             </div>
