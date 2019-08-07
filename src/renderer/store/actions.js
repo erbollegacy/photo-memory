@@ -32,15 +32,30 @@ export default {
   saveMemory ({getters, commit}, { selectedImagesNames, description }) {
     // copy images
     const fs = require('fs').promises
+    const fsSync = require('fs')
     const path = require('path')
     const ops = []
     const imagesFolder = 'images'
     const imagesThumbFolder = 'thumb'
-    const { sourcePath, destinationPath } = getters
     const notes = getters.imageNotes
+    let { sourcePath, destinationPath } = getters
 
-    fs.mkdir(path.join(destinationPath, imagesFolder))
-      .catch(() => console.log('images folder already exists'))
+    let subFolder = new Date().toISOString()
+      .replace(/\.+.+/, '')
+      .replace(/:/g, '-')
+    destinationPath = path.join(destinationPath, subFolder)
+
+    try {
+      fsSync.mkdirSync(destinationPath)
+    } catch (e) {
+      console.log('sub folder already exists')
+    }
+
+    try {
+      fsSync.mkdirSync(path.join(destinationPath, imagesFolder))
+    } catch (e) {
+      console.log('images folder already exists')
+    }
 
     for (let image in selectedImagesNames) {
       const imagePath = path.join(sourcePath, image)
@@ -97,6 +112,10 @@ export default {
         console.log('unable to read an HTML html')
       })
     ops.push(templatePromise)
+
+    // remember saved images
+
+    // remember generated memory
 
     return Promise.all(ops)
       .then(() => {

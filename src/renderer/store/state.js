@@ -4,5 +4,6 @@ export default {
   scannedImages: null,
   activeImage: null,
   imageNotes: {},
-  showEditor: false
+  showEditor: false,
+  handledImage: {}
 }
