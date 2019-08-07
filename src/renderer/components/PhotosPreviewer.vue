@@ -9,6 +9,10 @@
                :style="{width: image.width + 'px', height: image.height + 'px'}"
                v-for="image in thumbs">
             <img v-lazy="image.path" :key="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"/>
+            <span class="icon-selected" v-if="imageNotes[image.name]">
+              <i class="fas fa-comment"></i>
+            </span>
+            <div class="note-cover" v-if="imageNotes[image.name]"></div>
           </div>
         </div>
       </div>
@@ -237,5 +241,14 @@
     padding: 0;
     max-height: calc(100vh - 110px - 340px);
     overflow: auto;
+  }
+  .note-cover {
+    position: absolute;
+    opacity: 0.5;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #4e73df;
   }
 </style>
