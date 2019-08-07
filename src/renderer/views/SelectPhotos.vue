@@ -12,16 +12,15 @@
 
         <div class="col-md-12" ref="container">
           <div class="row">
-            <div class="gallery" @onAfterAppendSubHtml="injectEditor" @onBeforeSlide="afterSlide">
-              <div data-sub-html="<div id='editor'></div>" class="image-container" :class="{selected: selectedImages[image.name]}" :href="image.original" @click="showImage(index, image.name)" @click.prevent.stop="toggle(image.name)" v-for="(image, index) in images" :key="image.path">
+            <div class="gallery">
+              <div class="image-container" :class="{selected: selectedImages.names[image.name]}" @click.prevent.stop="toggle(image.name)" v-for="(image, index) in thumbnails" :key="image.path">
                 <img v-lazy="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"/>
-                <span class="icon-selected" v-if="selectedImages[image.name]">
+                <span class="icon-selected" v-if="selectedImages.names[image.name]">
                   <i class="fas fa-check-circle"></i>
                 </span>
                 <div class="cover">
                   <div class="actions">
-
-                    <a v-if="!selectedImages[image.name]" href="#" title="Select Photo" @click.prevent.stop="select(image.name)" class="btn btn-light btn-circle btn-select">
+                    <a v-if="!selectedImages.names[image.name]" href="#" title="Select Photo" @click.prevent.stop="select(image.name)" class="btn btn-light btn-circle btn-select">
                       <i class="fas fa-plus"></i>
                     </a>
                     <a v-else href="#" title="Unselect Photo" @click.prevent.stop="unselect(image.name)" class="btn btn-light btn-circle btn-select">
@@ -42,7 +41,7 @@
     <!-- End of Main Content -->
 
     <!-- Footer -->
-    <footer class="footer" v-if="images.length">
+    <footer class="footer" v-if="thumbnails.length">
       <div class="container-fluid">
         <a href="#" @click.prevent="showModal" :class="{disabled: !hasSelectedItems}" title="Create a Memory" class="btn btn-primary btn-circle">
           <i class="fas fa-plus"></i>
@@ -51,25 +50,17 @@
     </footer>
     <!-- End of Footer -->
 
-    <b-modal id="createMemory" okTitle="Save" scrollable size="xl" title="Create a Memory" @ok="onSave()">
+    <b-modal lazy id="createMemory" okTitle="Save" scrollable size="xl" title="Create a Memory" @ok="onSave()">
+      <photos-previewer :images="selectedImages.thumbnails"></photos-previewer>
+
       <b-form>
-        <b-form-group
-            label="Save to:"
-            label-for="saveTo"
-            description="Please choose a path where you'd like to save your Photo Memory"
-        >
-          <b-form-file v-model="saveTo" directory :placeholder="saveTo ? saveTo.path : 'Destination path'">
-            <template slot="file-name" slot-scope="{ files }">
-              <span>{{ files[0].path }}</span>
-            </template>
-          </b-form-file>
-        </b-form-group>
-        <b-form-group label="Description:">
-          <ckeditor :editor="editor" v-model="description"></ckeditor>
+        <b-form-group class="memory-desc">
+          <ckeditor :editor="editor" v-model="description" :config="editorConfig"></ckeditor>
         </b-form-group>
       </b-form>
+
       <template slot="modal-footer" slot-scope="{ ok, cancel }">
-        <b-button :disabled="!saveTo || showLoading" variant="primary" @click="ok()">
+        <b-button :disabled="showLoading" variant="primary" @click="ok()">
           Save
         </b-button>
         <b-button @click="cancel()">
@@ -82,45 +73,50 @@
 </template>
 
 <script>
-  import Vue from 'vue'
   import { mapActions, mapGetters } from 'vuex'
   import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
   import sharp from 'sharp'
-  import TextEditor from '../components/TextEditor'
-  import 'lightgallery.js/dist/css/lightgallery.min.css'
-  import 'lightgallery.js'
-  import 'lg-zoom.js'
-  import 'lg-autoplay.js'
+  import PhotosPreviewer from '../components/PhotosPreviewer'
   import Masonry from 'masonry-layout'
 
   export default {
-    name: 'choose-folder',
+    name: 'select-photos',
+    components: { PhotosPreviewer },
     computed: {
       ...mapGetters([
-        'chosenDirectory',
-        'directoryImages'
+        'sourcePath',
+        'destinationPath',
+        'scannedImages',
+        'imageNotes'
       ]),
 
       hasSelectedItems () {
-        if (this.selectedImages) {
-          return Object.keys(this.selectedImages).length
+        if (this.selectedImages.names) {
+          return Object.keys(this.selectedImages.names).length
         }
       }
     },
     data () {
       return {
-        images: [],
-        selectedImages: {},
-        notes: {},
-        selectedImageName: null,
+        thumbnails: [],
+        selectedImages: {
+          names: {},
+          thumbnails: []
+        },
+
         description: '',
-        saveTo: null,
+
         resizeTimeout: null,
         resizeDelay: 200,
+
         editor: ClassicEditor,
-        showLoading: false,
-        photoTextEditor: null,
-        galleryInitialed: false
+        editorConfig: {
+          placeholder: 'Description',
+          toolbar: [
+            'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', 'undo', 'redo'
+          ]
+        },
+        showLoading: false
       }
     },
     methods: {
@@ -128,25 +124,6 @@
         'scanDirectory',
         'saveMemory'
       ]),
-
-      injectEditor () {
-        setTimeout(() => {
-          document.querySelector('#editor').appendChild(this.photoTextEditor.$el)
-        })
-      },
-
-      afterSlide (event) {
-        let newSlide = window.lgData.lg0.items[event.detail.index]
-        if (newSlide) {
-          let name = newSlide.attributes.href.value.split('/').pop()
-          this.selectedImageName = name
-          this.photoTextEditor.setValue(this.notes[this.selectedImageName])
-
-          setTimeout(() => {
-            document.querySelector('.ck-content').focus()
-          }, 1000)
-        }
-      },
 
       onResize () {
         clearTimeout(this.resizeTimeout)
@@ -159,8 +136,8 @@
         const sizesPromises = []
         const containerWidth = this.$refs.container.offsetWidth
 
-        this.directoryImages.forEach(image => {
-          let size = sharp(`${this.chosenDirectory}/${image}`)
+        this.scannedImages.forEach(image => {
+          let size = sharp(`${this.sourcePath}/${image}`)
             .metadata()
             .then(({ width, height }) => {
               let columnWidth = (containerWidth / 3) - 7
@@ -171,8 +148,8 @@
               return {
                 width,
                 height,
-                path: `thumb://${this.chosenDirectory}/${image}?w=${parseInt(width)}`,
-                original: `orig://${this.chosenDirectory}/${image}`,
+                path: `thumb://${this.sourcePath}/${image}?w=${parseInt(width)}`,
+                original: `orig://${this.sourcePath}/${image}`,
                 name: image
               }
             })
@@ -184,7 +161,7 @@
 
         Promise.all(sizesPromises)
           .then(sizes => {
-            this.images = sizes.filter(size => size)
+            this.thumbnails = sizes.filter(size => size)
 
             setTimeout(() => {
               /* eslint-disable no-new */
@@ -195,37 +172,20 @@
               })
 
               msnry.layout()
-
-              // if (this.galleryInitialed) {
-              //   return
-              // }
-              //
-              // const gallery = document.querySelector('.gallery')
-              // window.lightGallery(gallery)
-              // this.galleryInitialed = true
-              //
-              // // hack light gallery a bit
-              // const plugin = window.lgData[gallery.getAttribute('lg-uid')]
-              // let originalBuild = plugin.build.bind(plugin)
-              // plugin.build = (index, manual) => {
-              //   if (manual) {
-              //     originalBuild(index)
-              //   }
-              // }
             }, 100)
           })
       },
 
       select (name) {
-        this.$set(this.selectedImages, name, true)
+        this.$set(this.selectedImages.names, name, true)
       },
 
       unselect (name) {
-        this.$delete(this.selectedImages, name)
+        this.$delete(this.selectedImages.names, name)
       },
 
       toggle (name) {
-        if (!this.selectedImages[name]) {
+        if (!this.selectedImages.names[name]) {
           this.select(name)
         } else {
           this.unselect(name)
@@ -233,27 +193,22 @@
       },
 
       showModal () {
+        this.selectedImages.thumbnails = this.thumbnails.filter(item => {
+          return item.name in this.selectedImages.names
+        })
         this.$bvModal.show('createMemory')
-      },
 
-      showImage (index, name) {
-        this.selectedImageName = name
-        this.photoTextEditor.setValue(this.notes[this.selectedImageName])
-        const gallery = document.querySelector('.gallery')
-        const plugin = window.lgData[gallery.getAttribute('lg-uid')]
-        plugin.build(index, true)
         setTimeout(() => {
-          document.querySelector('.ck-content').focus()
-        }, 100)
+          document.querySelector('#createMemory .ck-content').focus()
+        }, 300)
       },
 
       onSave () {
         this.showLoading = true
         this.saveMemory({
-          selectedImages: this.selectedImages,
-          notes: this.notes,
-          description: this.description,
-          saveTo: this.saveTo.path
+          selectedImagesNames: this.selectedImages.names,
+          imageNotes: this.imageNotes,
+          description: this.description
         })
           .then(() => {
             this.showLoading = false
@@ -265,15 +220,8 @@
     },
 
     mounted () {
-      this.photoTextEditor = new (Vue.extend(TextEditor))()
-      this.photoTextEditor.$mount()
-      this.photoTextEditor.$on('input', (note) => {
-        this.$set(this.notes, this.selectedImageName, note)
-        this.$set(this.selectedImages, this.selectedImageName, true)
-      })
-
-      if (this.chosenDirectory) {
-        this.scanDirectory(this.chosenDirectory)
+      if (this.sourcePath) {
+        this.scanDirectory(this.sourcePath)
           .then(() => this.updateImages())
 
         window.addEventListener('resize', this.onResize)
@@ -284,7 +232,6 @@
 
     destroyed () {
       window.removeEventListener('resize', this.onResize)
-      this.photoTextEditor.$destroy()
     }
   }
 </script>
@@ -396,7 +343,8 @@
   .page {
     position: relative;
   }
-  #caption2 {
-    position: absolute;
+  /deep/ .memory-desc {
+    margin-bottom: 0;
+    margin-top: 10px;
   }
 </style>

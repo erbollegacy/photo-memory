@@ -1,4 +1,8 @@
 export default {
-  chosenDirectory: state => state.chosenDirectory,
-  directoryImages: state => state.directoryImages
+  sourcePath: state => state.sourcePath,
+  destinationPath: state => state.destinationPath,
+  scannedImages: state => state.scannedImages,
+  imageNotes: state => state.imageNotes,
+  activeImage: state => state.activeImage,
+  showEditor: state => state.showEditor
 }

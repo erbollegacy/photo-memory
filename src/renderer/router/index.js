@@ -16,6 +16,16 @@ export default new Router({
       component: require('@/views/SelectPhotos').default
     },
     {
+      path: '/settings',
+      name: 'settings',
+      component: require('@/views/Settings').default
+    },
+    {
+      path: '/memories',
+      name: 'memories',
+      component: require('@/views/Memories').default
+    },
+    {
       path: '*',
       redirect: '/'
     }

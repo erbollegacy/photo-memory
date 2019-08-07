@@ -1,4 +1,9 @@
 export default {
-  chosenDirectory: '',
-  directoryImages: null
+  sourcePath: null,
+  destinationPath: null,
+  scannedImages: null,
+  activeImage: null,
+  imageNotes: {},
+  showEditor: false,
+  handledImage: {}
 }
