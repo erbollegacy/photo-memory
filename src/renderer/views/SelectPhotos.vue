@@ -80,13 +80,14 @@
   import Masonry from 'masonry-layout'
 
   export default {
-    name: 'choose-folder',
+    name: 'select-photos',
     components: { PhotosPreviewer },
     computed: {
       ...mapGetters([
         'sourcePath',
         'destinationPath',
-        'scannedImages'
+        'scannedImages',
+        'imageNotes'
       ]),
 
       hasSelectedItems () {
@@ -103,7 +104,6 @@
           thumbnails: []
         },
 
-        notes: {},
         description: '',
 
         resizeTimeout: null,
@@ -194,13 +194,17 @@
           return item.name in this.selectedImages.names
         })
         this.$bvModal.show('createMemory')
+
+        setTimeout(() => {
+          document.querySelector('#createMemory .ck-content').focus()
+        }, 300)
       },
 
       onSave () {
         this.showLoading = true
         this.saveMemory({
           selectedImagesNames: this.selectedImages.names,
-          notes: this.notes,
+          imageNotes: this.imageNotes,
           description: this.description
         })
           .then(() => {
@@ -335,9 +339,6 @@
   }
   .page {
     position: relative;
-  }
-  #caption2 {
-    position: absolute;
   }
   /deep/ .memory-desc {
     margin-bottom: 0;

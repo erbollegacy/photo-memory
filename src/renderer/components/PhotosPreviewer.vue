@@ -2,12 +2,12 @@
   <div class="wrapper">
     <div class="col-md-12" ref="container">
       <div class="row">
-        <div class="preview gallery" @onAfterAppendSubHtml="injectEditor" @onBeforeSlide="afterSlide">
-          <div data-sub-html="<div id='editor'></div>"
+        <div class="preview gallery" @onBeforeSlide="beforeSlide" @onBeforeClose="beforeClose">
+          <div @click="setActiveImageAndFocus(image.name)"
                class="image-container"
                :href="image.original"
                :style="{width: image.width + 'px', height: image.height + 'px'}"
-               v-for="(image, index) in thumbs">
+               v-for="image in thumbs">
             <img v-lazy="image.path" :key="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"/>
           </div>
         </div>
@@ -17,8 +17,7 @@
 </template>
 
 <script>
-  import Vue from 'vue'
-  import TextEditor from '../components/TextEditor'
+  import { mapActions, mapGetters } from 'vuex'
   import Masonry from 'masonry-layout'
   import 'lightgallery.js/dist/css/lightgallery.min.css'
   import 'lightgallery.js'
@@ -30,11 +29,15 @@
     props: {
       images: Array
     },
+    computed: {
+      ...mapGetters([
+        'imageNotes'
+      ])
+    },
     data () {
       return {
         photoTextEditor: null,
-        selectedImageName: null,
-        notes: {},
+
         thumbs: [],
 
         columnsCount: 3,
@@ -48,34 +51,31 @@
       }
     },
     methods: {
-      injectEditor () {
-        setTimeout(() => {
-          document.querySelector('#editor').appendChild(this.photoTextEditor.$el)
-        })
-      },
+      ...mapActions([
+        'toggleEditor',
+        'setActiveImage'
+      ]),
 
-      afterSlide (event) {
+      beforeSlide (event) {
         let newSlide = window.lgData.lg0.items[event.detail.index]
         if (newSlide) {
           let name = newSlide.attributes.href.value.split('/').pop()
-          this.selectedImageName = name
-          this.photoTextEditor.setValue(this.notes[this.selectedImageName])
-
-          setTimeout(() => {
-            document.querySelector('.ck-content').focus()
-          }, 1000)
+          this.setActiveImageAndFocus(name)
         }
       },
 
-      showImage (index, name) {
-        this.selectedImageName = name
-        this.photoTextEditor.setValue(this.notes[this.selectedImageName])
-        const gallery = document.querySelector('.preview')
-        const plugin = window.lgData[gallery.getAttribute('lg-uid')]
-        plugin.build(index, true)
+      beforeClose () {
+        this.toggleEditor(false)
+      },
+
+      setActiveImageAndFocus (name) {
+        this.setActiveImage(name)
+        this.toggleEditor(true)
+        document.querySelector('#createMemory').removeAttribute('tabIndex')
+
         setTimeout(() => {
-          document.querySelector('.ck-content').focus()
-        }, 100)
+          document.querySelector('.text-editor .ck-content').focus()
+        }, 300)
       },
 
       initGallery () {
@@ -120,7 +120,7 @@
             height,
             path: image.path.replace(image.width, width),
             original: image.original,
-            name: image
+            name: image.name
           }
         })
 
@@ -138,13 +138,6 @@
     },
 
     mounted () {
-      this.photoTextEditor = new (Vue.extend(TextEditor))()
-      this.photoTextEditor.$mount()
-      this.photoTextEditor.$on('input', (note) => {
-        this.$set(this.notes, this.selectedImageName, note)
-        this.$set(this.selectedImagesNames, this.selectedImageName, true)
-      })
-
       setTimeout(() => {
         this.updateImages()
         window.addEventListener('resize', this.onResize)
@@ -153,7 +146,8 @@
 
     destroyed () {
       window.removeEventListener('resize', this.onResize)
-      this.photoTextEditor.$destroy()
+      window.lgData.lg0.destroy(true)
+      window.lgData.uid = 0
     }
   }
 </script>

@@ -148,14 +148,24 @@
       </div>
       <!-- End of Content Wrapper -->
 
+      <text-editor v-show="showEditor"></text-editor>
     </div>
     <!-- End of Page Wrapper -->
   </div>
 </template>
 
 <script>
+  import TextEditor from './components/TextEditor'
+  import { mapGetters } from 'vuex'
+
   export default {
-    name: 'photo-memory'
+    name: 'photo-memory',
+    components: {
+      TextEditor
+    },
+    computed: {
+      ...mapGetters(['showEditor'])
+    }
   }
 </script>
 

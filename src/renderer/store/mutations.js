@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 export default {
   setSourcePath: (state, directory) => {
     state.sourcePath = directory
@@ -9,5 +11,17 @@ export default {
 
   setScannedImages: (state, images) => {
     state.scannedImages = images
+  },
+
+  setImageNote: (state, { image, note }) => {
+    Vue.set(state.imageNotes, image, note)
+  },
+
+  setActiveImage: (state, name) => {
+    state.activeImage = name
+  },
+
+  toggleEditor: (state, show) => {
+    state.showEditor = show
   }
 }

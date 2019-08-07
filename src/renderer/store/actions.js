@@ -29,7 +29,7 @@ export default {
     })
   },
 
-  saveMemory ({getters, commit}, { selectedImagesNames, notes, description }) {
+  saveMemory ({getters, commit}, { selectedImagesNames, description }) {
     // copy images
     const fs = require('fs').promises
     const path = require('path')
@@ -37,6 +37,7 @@ export default {
     const imagesFolder = 'images'
     const imagesThumbFolder = 'thumb'
     const { sourcePath, destinationPath } = getters
+    const notes = getters.imageNotes
 
     fs.mkdir(path.join(destinationPath, imagesFolder))
       .catch(() => console.log('images folder already exists'))
@@ -123,5 +124,17 @@ export default {
   setDestinationPath ({getters, commit}, directory) {
     localStorage.setItem('destinationPath', directory)
     commit('setDestinationPath', directory)
+  },
+
+  setImageNote ({getters, commit}, { image, note }) {
+    commit('setImageNote', { image, note })
+  },
+
+  setActiveImage ({getters, commit}, name) {
+    commit('setActiveImage', name)
+  },
+
+  toggleEditor ({getters, commit}, show) {
+    commit('toggleEditor', show)
   }
 }
