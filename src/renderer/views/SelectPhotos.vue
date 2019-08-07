@@ -111,7 +111,10 @@
 
         editor: ClassicEditor,
         editorConfig: {
-          placeholder: 'Description'
+          placeholder: 'Description',
+          toolbar: [
+            'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', 'undo', 'redo'
+          ]
         },
         showLoading: false
       }

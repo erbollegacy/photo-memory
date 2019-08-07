@@ -1,6 +1,6 @@
 <template>
   <div class="text-editor" @keyup.right.left.stop>
-    <ckeditor :editor="editor" v-model="value"></ckeditor>
+    <ckeditor :editor="editor" :config="editorConfig" v-model="value"></ckeditor>
   </div>
 </template>
 
@@ -26,7 +26,12 @@
     },
     data () {
       return {
-        editor: ClassicEditor
+        editor: ClassicEditor,
+        editorConfig: {
+          toolbar: [
+            'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', 'undo', 'redo'
+          ]
+        }
       }
     },
     methods: {

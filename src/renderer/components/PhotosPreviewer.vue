@@ -7,10 +7,11 @@
                class="image-container"
                :href="image.original"
                :style="{width: image.width + 'px', height: image.height + 'px'}"
+               title="Click to open"
                v-for="image in thumbs">
             <img v-lazy="image.path" :key="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"/>
-            <span class="icon-selected" v-if="imageNotes[image.name]">
-              <i class="fas fa-comment"></i>
+            <span class="icon-selected" title="This image has a description" v-if="imageNotes[image.name]">
+              <i class="fas fa-quote-right"></i>
             </span>
             <div class="note-cover" v-if="imageNotes[image.name]"></div>
           </div>
@@ -244,11 +245,10 @@
   }
   .note-cover {
     position: absolute;
-    opacity: 0.5;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
-    background: #4e73df;
+    background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0, rgba(0, 0, 0, 0.199) 3.5%, rgba(0, 0, 0, 0.195) 7%, rgba(0, 0, 0, 0.19) 10.35%, rgba(0, 0, 0, 0.182) 13.85%, rgba(0, 0, 0, 0.174) 17.35%, rgba(0, 0, 0, 0.165) 20.85%, rgba(0, 0, 0, 0.155) 24.35%, rgba(0, 0, 0, 0.145) 27.85%, rgba(0, 0, 0, 0.135) 31.35%, rgba(0, 0, 0, 0.126) 34.85%, rgba(0, 0, 0, 0.118) 38.35%, rgba(0, 0, 0, 0.11) 41.85%, rgba(0, 0, 0, 0.105) 45.35%, rgba(0, 0, 0, 0.1) 48.85%, rgba(0, 0, 0, 0.103) 52.35%, rgba(0, 0, 0, 0.112) 55.85%, rgba(0, 0, 0, 0.126) 59.35%, rgba(0, 0, 0, 0.144) 62.85%, rgba(0, 0, 0, 0.165) 66.35%, rgba(0, 0, 0, 0.188) 69.85%, rgba(0, 0, 0, 0.213) 73.35%, rgba(0, 0, 0, 0.237) 76.85%, rgba(0, 0, 0, 0.262) 80.35%, rgba(0, 0, 0, 0.285) 83.85%, rgba(0, 0, 0, 0.306) 87.35%, rgba(0, 0, 0, 0.324) 90.85%, rgba(0, 0, 0, 0.338) 94.35%, rgba(0, 0, 0, 0.347) 97.85%, rgba(0, 0, 0, 0.35));
   }
 </style>
