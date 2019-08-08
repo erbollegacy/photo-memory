@@ -5,5 +5,6 @@ export default {
   activeImage: null,
   imageNotes: {},
   showEditor: false,
-  handledImages: {}
+  handledImages: {},
+  memories: []
 }

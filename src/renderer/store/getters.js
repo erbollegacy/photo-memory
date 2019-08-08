@@ -5,5 +5,6 @@ export default {
   imageNotes: state => state.imageNotes,
   activeImage: state => state.activeImage,
   showEditor: state => state.showEditor,
-  handledImages: state => state.handledImages
+  handledImages: state => state.handledImages,
+  memories: state => state.memories
 }

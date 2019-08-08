@@ -27,5 +27,9 @@ export default {
 
   rememberHandledImages: (state, images) => {
     state.handledImages = Object.assign({}, images, state.handledImages)
+  },
+
+  setMemories: (state, memories) => {
+    state.memories = memories
   }
 }

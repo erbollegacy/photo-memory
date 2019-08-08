@@ -121,6 +121,21 @@ export default {
     dispatch('rememberHandledImages', selectedImagesNames)
 
     // remember generated memory
+    let previewThumbsCounter = 0
+    let previewThumbs = []
+    for (let image in selectedImagesNames) {
+      previewThumbs.push(path.join(destinationPath, imagesThumbFolder, image))
+      previewThumbsCounter++
+      if (previewThumbsCounter === 3) {
+        break
+      }
+    }
+    const memory = {
+      description: description.replace(/<[^>]*>?/gm, ''),
+      path: destinationPath,
+      thumbs: previewThumbs
+    }
+    dispatch('rememberMemory', memory)
 
     return Promise.all(ops)
       .then(() => {
@@ -137,17 +152,34 @@ export default {
     localStorage.setItem('handledImages', JSON.stringify(getters.handledImages))
   },
 
+  rememberMemory ({getters, commit}, memory) {
+    commit('setMemories', [...getters.memories, memory])
+    localStorage.setItem('memories', JSON.stringify(getters.memories))
+  },
+
   initSettings ({ commit }) {
     let sourcePath = localStorage.getItem('sourcePath')
     let destinationPath = localStorage.getItem('destinationPath')
     let handledImages = localStorage.getItem('handledImages')
+    let memories = localStorage.getItem('memories')
 
     commit('setSourcePath', sourcePath)
     commit('setDestinationPath', destinationPath)
-    try {
-      commit('rememberHandledImages', JSON.parse(handledImages))
-    } catch (e) {
-      console.log('unable to parse handled images')
+
+    if (handledImages) {
+      try {
+        commit('rememberHandledImages', JSON.parse(handledImages))
+      } catch (e) {
+        console.log('unable to parse handled images')
+      }
+    }
+
+    if (memories) {
+      try {
+        commit('setMemories', JSON.parse(memories))
+      } catch (e) {
+        console.log('unable to parse memories')
+      }
     }
   },
 
