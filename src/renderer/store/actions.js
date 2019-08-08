@@ -29,7 +29,7 @@ export default {
     })
   },
 
-  saveMemory ({getters, commit}, { selectedImagesNames, description }) {
+  saveMemory ({getters, dispatch, commit}, { selectedImagesNames, description }) {
     // copy images
     const fs = require('fs').promises
     const fsSync = require('fs')
@@ -57,6 +57,7 @@ export default {
       console.log('images folder already exists')
     }
 
+    // copy images
     for (let image in selectedImagesNames) {
       const imagePath = path.join(sourcePath, image)
       const imgDestinationPath = path.join(destinationPath, imagesFolder, image)
@@ -64,8 +65,11 @@ export default {
       ops.push(imagePromise)
     }
 
-    fs.mkdir(path.join(destinationPath, imagesThumbFolder))
-      .catch(() => console.log('thumbnails folder already exists'))
+    try {
+      fsSync.mkdirSync(path.join(destinationPath, imagesThumbFolder))
+    } catch (e) {
+      console.log('thumbnails folder already exists')
+    }
 
     // copy thumbnails
     for (let image in selectedImagesNames) {
@@ -113,7 +117,8 @@ export default {
       })
     ops.push(templatePromise)
 
-    // remember saved images
+    // remember handled images
+    dispatch('rememberHandledImages', selectedImagesNames)
 
     // remember generated memory
 
@@ -127,12 +132,23 @@ export default {
       })
   },
 
+  rememberHandledImages ({getters, commit}, images) {
+    commit('rememberHandledImages', images)
+    localStorage.setItem('handledImages', JSON.stringify(getters.handledImages))
+  },
+
   initSettings ({ commit }) {
     let sourcePath = localStorage.getItem('sourcePath')
     let destinationPath = localStorage.getItem('destinationPath')
+    let handledImages = localStorage.getItem('handledImages')
 
     commit('setSourcePath', sourcePath)
     commit('setDestinationPath', destinationPath)
+    try {
+      commit('rememberHandledImages', JSON.parse(handledImages))
+    } catch (e) {
+      console.log('unable to parse handled images')
+    }
   },
 
   setSourcePath ({getters, commit}, directory) {

@@ -5,5 +5,5 @@ export default {
   activeImage: null,
   imageNotes: {},
   showEditor: false,
-  handledImage: {}
+  handledImages: {}
 }

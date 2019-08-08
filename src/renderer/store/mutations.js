@@ -23,5 +23,9 @@ export default {
 
   toggleEditor: (state, show) => {
     state.showEditor = show
+  },
+
+  rememberHandledImages: (state, images) => {
+    state.handledImages = Object.assign({}, images, state.handledImages)
   }
 }

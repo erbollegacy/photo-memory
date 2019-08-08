@@ -91,13 +91,21 @@
         'sourcePath',
         'destinationPath',
         'scannedImages',
-        'imageNotes'
+        'imageNotes',
+        'handledImages'
       ]),
 
       hasSelectedItems () {
         if (this.selectedImages.names) {
           return Object.keys(this.selectedImages.names).length
         }
+      }
+    },
+    watch: {
+      handledImages () {
+        this.thumbnails = this.thumbnails.filter(thumb => !(thumb.name in this.handledImages))
+
+        this.updateMasonry()
       }
     },
     data () {
@@ -140,8 +148,9 @@
       updateImages () {
         const sizesPromises = []
         const containerWidth = this.$refs.container.offsetWidth
+        const nonHandlesImages = this.scannedImages.filter(name => !(name in this.handledImages))
 
-        this.scannedImages.forEach(image => {
+        nonHandlesImages.forEach(image => {
           let size = sharp(`${this.sourcePath}/${image}`)
             .metadata()
             .then(({ width, height }) => {
@@ -168,17 +177,28 @@
           .then(sizes => {
             this.thumbnails = sizes.filter(size => size)
 
-            setTimeout(() => {
-              /* eslint-disable no-new */
-              let msnry = new Masonry('.gallery', {
-                gutter: 10,
-                itemSelector: '.image-container',
-                resize: false
-              })
-
-              msnry.layout()
-            }, 100)
+            this.updateMasonry()
           })
+      },
+
+      updateMasonry () {
+        if (!this.thumbnails.length) {
+          this.gridReady = true
+          this.showLoading = false
+          return
+        }
+        setTimeout(() => {
+          /* eslint-disable no-new */
+          let msnry = new Masonry('.gallery', {
+            gutter: 10,
+            itemSelector: '.image-container',
+            resize: false
+          })
+
+          msnry.layout()
+          this.gridReady = true
+          this.showLoading = false
+        }, 100)
       },
 
       select (name) {
