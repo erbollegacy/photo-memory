@@ -9,167 +9,243 @@
         <h1 class="h3 mb-0 text-gray-800">Memories</h1>
       </div>
 
-      <div class="row">
-
-        <!-- Earnings (Monthly) Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-          <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-              <div class="row no-gutters align-items-center">
-                <div class="col mr-2">
-                  <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Earnings (Monthly)</div>
-                  <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
-                </div>
-                <div class="col-auto">
-                  <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Earnings (Monthly) Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-          <div class="card border-left-success shadow h-100 py-2">
-            <div class="card-body">
-              <div class="row no-gutters align-items-center">
-                <div class="col mr-2">
-                  <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Earnings (Annual)</div>
-                  <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
-                </div>
-                <div class="col-auto">
-                  <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Earnings (Monthly) Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-          <div class="card border-left-info shadow h-100 py-2">
-            <div class="card-body">
-              <div class="row no-gutters align-items-center">
-                <div class="col mr-2">
-                  <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks</div>
-                  <div class="row no-gutters align-items-center">
-                    <div class="col-auto">
-                      <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                    </div>
-                    <div class="col">
-                      <div class="progress progress-sm mr-2">
-                        <div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-auto">
-                  <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pending Requests Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-          <div class="card border-left-warning shadow h-100 py-2">
-            <div class="card-body">
-              <div class="row no-gutters align-items-center">
-                <div class="col mr-2">
-                  <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pending Requests</div>
-                  <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
-                </div>
-                <div class="col-auto">
-                  <i class="fas fa-comments fa-2x text-gray-300"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-
-        <div class="col-lg-6">
-
-          <!-- Default Card Example -->
-          <div class="card mb-4">
-            <div class="card-header">
-              Default Card Example
-            </div>
-            <div class="card-body">
-              This card uses Bootstrap's default styling with no utility classes added. Global styles are the only things modifying the look and feel of this default card example.
-            </div>
-          </div>
-
-          <!-- Basic Card Example -->
-          <div class="card shadow mb-4">
-            <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Basic Card Example</h6>
-            </div>
-            <div class="card-body">
-              The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS!
-            </div>
-          </div>
-
-        </div>
-
-        <div class="col-lg-6">
-
-          <!-- Dropdown Card Example -->
-          <div class="card shadow mb-4">
-            <!-- Card Header - Dropdown -->
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-              <h6 class="m-0 font-weight-bold text-primary">Dropdown Card Example</h6>
-              <div class="dropdown no-arrow">
-                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
-                  <div class="dropdown-header">Dropdown Header:</div>
-                  <a class="dropdown-item" href="#">Action</a>
-                  <a class="dropdown-item" href="#">Another action</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-              </div>
-            </div>
-            <!-- Card Body -->
-            <div class="card-body">
-              Dropdown menus can be placed in the card header in order to extend the functionality of a basic card. In this dropdown card example, the Font Awesome vertical ellipsis icon in the card header can be clicked on in order to toggle a dropdown menu.
-            </div>
-          </div>
-
-          <!-- Collapsable Card Example -->
-          <div class="card shadow mb-4">
-            <!-- Card Header - Accordion -->
-            <a href="#collapseCardExample" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
-              <h6 class="m-0 font-weight-bold text-primary">Collapsable Card Example</h6>
-            </a>
-            <!-- Card Content - Collapse -->
-            <div class="collapse show" id="collapseCardExample">
-              <div class="card-body">
-                This is a collapsable card example using Bootstrap's built in collapse functionality. <strong>Click on the card header</strong> to see the card body collapse and expand!
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-
     </div>
+
+    <div class="container">
+      <!-- Page Heading -->
+      <div class="cardList" v-for="memory of memories" @click="browse(memory.path)">
+        <div class="card" v-for="thumb of memory.thumbs">
+          <div class="card__bg" :style="{ backgroundImage: `url('thumb://${thumb}')` }"></div>
+        </div>
+        <span class="cardList__title">{{ memory.description | truncate(40, '...') }}</span>
+      </div>
+    </div>
+
+    <div class="container no-image-container" v-if="!memories.length">
+      <div class="no-image">
+        <i class="fas fa-box-open"></i>
+        <span class="no-image-text">no memories here</span>
+      </div>
+    </div>
+
     <!-- /.container-fluid -->
   </div>
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
+  import open from 'open'
+
   export default {
-    name: 'landing-page'
+    name: 'landing-page',
+    computed: {
+      ...mapGetters([
+        'memories'
+      ]),
+
+      hasSelectedItems () {
+        if (this.selectedImages.names) {
+          return Object.keys(this.selectedImages.names).length
+        }
+      }
+    },
+
+    filters: {
+      truncate: function (text, length, clamp) {
+        clamp = clamp || '...'
+        let node = document.createElement('div')
+        node.innerHTML = text
+        let content = node.textContent
+        return content.length > length ? content.slice(0, length) + clamp : content
+      }
+    },
+
+    methods: {
+      browse (memoryPath) {
+        open(`${memoryPath}/index.html`)
+      }
+    }
   }
 </script>
 
-<style>
+<style scoped lang="scss">
+  .container {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    width: 100vw;
+    max-width: 80vw;
+    margin: auto;
+  }
+  .container h1 {
+    -webkit-box-flex: 0;
+    -ms-flex: none;
+    flex: none;
+    width: 100%;
+    margin: 0 2% 2em 2%;
+  }
 
+  .cardList {
+    position: relative;
+    display: block;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    margin: 2%;
+    -webkit-filter: none;
+    filter: none;
+    opacity: 1;
+    -webkit-transition: 0.25s ease-in-out opacity, 0.25s ease-in-out filter;
+    transition: 0.25s ease-in-out opacity, 0.25s ease-in-out filter;
+    cursor: pointer;
+    width: 21%;
+    flex-grow: 0;
+  }
+  .cardList__title {
+    display: block;
+    padding-top: 70%;
+    text-align: center;
+    font-size: 0.8em;
+    opacity: 0.8;
+    z-index: 0;
+  }
+  .cardList:hover .card {
+    box-shadow: 0 5px 25px 0 rgba(0, 0, 0, 0.5);
+    -webkit-transition: 0.35s ease-out transform, 0.35s ease-out shadow;
+    transition: 0.35s ease-out transform, 0.35s ease-out shadow;
+  }
+  .cardList:nth-child(2n + 1) .card:nth-child(1) {
+    -webkit-transform: translate(-2%, -2%);
+    transform: translate(-2%, -2%);
+  }
+  .cardList:nth-child(2n + 1) .card:nth-child(2) {
+    -webkit-transform: translate(-2%, 2%) rotate(2deg);
+    transform: translate(-2%, 2%) rotate(2deg);
+  }
+  .cardList:nth-child(2n + 1) .card:last-of-type {
+    -webkit-transform: rotate(-2deg);
+    transform: rotate(-2deg);
+  }
+  .cardList:nth-child(2n + 1):hover .card__bg {
+    -webkit-filter: none;
+    filter: none;
+    opacity: 1;
+  }
+  .cardList:nth-child(2n + 1):hover .card:nth-child(1) {
+    -webkit-transform: translate(30%, 45%) rotate(-2deg);
+    transform: translate(30%, 45%) rotate(-2deg);
+  }
+  .cardList:nth-child(2n + 1):hover .card:nth-child(2) {
+    -webkit-transform: translate(-50%, 35%) rotate(5deg);
+    transform: translate(-50%, 35%) rotate(5deg);
+  }
+  .cardList:nth-child(2n + 1):hover .card:last-of-type {
+    -webkit-transform: rotate(5deg) translate(0%, -40%);
+    transform: rotate(5deg) translate(0%, -40%);
+  }
+  .cardList:nth-child(2n) .card:nth-child(1) {
+    -webkit-transform: translate(2%, 2%);
+    transform: translate(2%, 2%);
+  }
+  .cardList:nth-child(2n) .card:nth-child(2) {
+    -webkit-transform: translate(2%, -2%) rotate(-2deg);
+    transform: translate(2%, -2%) rotate(-2deg);
+  }
+  .cardList:nth-child(2n) .card:nth-child(3) {
+    -webkit-transform: rotate(2deg);
+    transform: rotate(2deg);
+  }
+  .cardList:nth-child(2n):hover .card:nth-child(1) {
+    -webkit-transform: translate(2%, 50%) rotate(5deg);
+    transform: translate(2%, 50%) rotate(5deg);
+  }
+  .cardList:nth-child(2n):hover .card:nth-child(2) {
+    -webkit-transform: translate(50%, -30%) rotate(10deg);
+    transform: translate(50%, -30%) rotate(10deg);
+  }
+  .cardList:nth-child(2n):hover .card:nth-child(3) {
+    -webkit-transform: translate(-25%, -40%) rotate(-5deg);
+    transform: translate(-25%, -40%) rotate(-5deg);
+  }
+
+  .card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding-top: 60%;
+    background-color: #ccc;
+    -webkit-transition: 0.28s ease-out transform, 0.28s ease-out shadow;
+    transition: 0.28s ease-out transform, 0.28s ease-out shadow;
+    overflow: hidden;
+    z-index: 5;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2);
+  }
+  .card__bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: #ccc;
+  }
+  .card:not(:last-of-type) .card__bg {
+    background-blend-mode: multiply;
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+    opacity: 0.25;
+    -webkit-transition: 0.25s ease-in-out filter, 0.25s ease-in-out opacity;
+    transition: 0.25s ease-in-out filter, 0.25s ease-in-out opacity;
+  }
+  .cardList:hover .card:not(:last-of-type) .card__bg {
+    background-blend-mode: normal;
+    -webkit-filter: none;
+    filter: none;
+    opacity: 1;
+  }
+
+  .container:hover .cardList {
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+    opacity: 0.25;
+    z-index: 1;
+  }
+  .container:hover .cardList:hover {
+    -webkit-filter: none;
+    filter: none;
+    opacity: 1;
+    z-index: 100;
+  }
+
+  .no-image-container {
+    justify-content: center;
+
+    .no-image {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: #ced4da;
+
+      i {
+        font-size: 100px
+      }
+      .no-image-text {
+        color: darkgray;
+        font-size: 20px;
+        font-style: italic;
+      }
+    }
+  }
 </style>
