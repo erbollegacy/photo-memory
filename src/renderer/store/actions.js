@@ -119,11 +119,11 @@ export default {
 
     return Promise.all(ops)
       .then(() => {
-        Swal.fire(
-          'Good job!',
-          'You have just created the photo memory!',
-          'success'
-        )
+        Swal.fire({
+          title: 'Good job!',
+          html: `You have just created a new photo memory! <br> Reference name: <b>${subFolder}</b>`,
+          type: 'success'
+        })
       })
   },
 

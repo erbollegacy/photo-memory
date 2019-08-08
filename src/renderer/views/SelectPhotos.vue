@@ -12,7 +12,7 @@
 
         <div class="col-md-12" ref="container">
           <div class="row">
-            <div class="gallery">
+            <div class="gallery" :class="{invisible: !gridReady}">
               <div class="image-container" :class="{selected: selectedImages.names[image.name]}" @click.prevent.stop="toggle(image.name)" v-for="(image, index) in thumbnails" :key="image.path">
                 <img v-lazy="image.path" :style="{width: image.width + 'px', height: image.height + 'px'}"/>
                 <span class="icon-selected" v-if="selectedImages.names[image.name]">
@@ -29,6 +29,10 @@
                   </div>
                 </div>
                 <div class="select-cover"></div>
+              </div>
+              <div v-if="!thumbnails.length" class="no-image">
+                <i class="fas fa-folder-open"></i>
+                <span class="no-image-text">no images here</span>
               </div>
             </div>
           </div>
@@ -116,7 +120,8 @@
             'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', 'undo', 'redo'
           ]
         },
-        showLoading: false
+        showLoading: false,
+        gridReady: false
       }
     },
     methods: {
@@ -204,7 +209,7 @@
       },
 
       onSave () {
-        this.showLoading = true
+        // this.showLoading = true
         this.saveMemory({
           selectedImagesNames: this.selectedImages.names,
           imageNotes: this.imageNotes,
@@ -212,6 +217,11 @@
         })
           .then(() => {
             this.showLoading = false
+            this.description = ''
+            this.selectedImages = {
+              names: {},
+              thumbnails: []
+            }
           })
           .catch(() => {
             this.showLoading = false
@@ -220,6 +230,7 @@
     },
 
     mounted () {
+      this.showLoading = true
       if (this.sourcePath) {
         this.scanDirectory(this.sourcePath)
           .then(() => this.updateImages())
@@ -342,9 +353,32 @@
   }
   .page {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
   /deep/ .memory-desc {
     margin-bottom: 0;
     margin-top: 10px;
+  }
+
+  .invisible {
+    visibility: hidden;
+  }
+  .no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: #ced4da;
+
+    i {
+      font-size: 100px
+    }
+    .no-image-text {
+      color: darkgray;
+      font-size: 20px;
+      font-style: italic;
+    }
   }
 </style>
